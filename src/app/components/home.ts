@@ -13,10 +13,13 @@ import { NewsCardComponent } from './news-card';
   styleUrls: ['./home.scss']
 })
 export class HomeComponent implements OnInit {
+
   articles: Article[] = [];
   featured: Article | null = null;
   loading = false;
   error = '';
+
+  currentCategory = 'general'; // ✅ track current category
 
   quickLinks = [
     { label: '🌍 World', value: 'world' },
@@ -28,43 +31,79 @@ export class HomeComponent implements OnInit {
   ];
 
   constructor(private newsService: NewsService) {}
-  ngOnInit() { this.loadNews(); }
-openUrl(url: string) { window.open(url, '_blank'); }
-  loadNews() {
-  this.loading = true;
-  this.error = '';
 
-  console.log('🚀 Calling /api/news...');
+  ngOnInit() {
+    this.loadNews();
+  }
 
-  this.newsService.getTopHeadlines('general').subscribe({
-    next: (res: any) => {
-      console.log('✅ FULL RESPONSE:', res);
+  // 🔗 Open article
+  openUrl(url: string) {
+    window.open(url, '_blank');
+  }
 
-      if (!res || !res.articles) {
-        console.error('⚠️ Invalid response format:', res);
-        this.error = 'Invalid API response';
-        this.loading = false;
-        return;
-      }
+  // 📰 Load news (main method)
+  loadNews(category: string = 'general') {
 
-      this.featured = res.articles[0] || null;
-      this.articles = res.articles.slice(1);
-      this.loading = false;
-    },
-
-    error: (err) => {
-      console.error('❌ API ERROR:', err);
-
-      if (err.status === 500) {
-        this.error = 'Server error (Vercel API issue)';
-      } else if (err.status === 404) {
-        this.error = 'API route not found (/api/news missing)';
-      } else {
-        this.error = 'Failed to load news';
-      }
-
-      this.loading = false;
+    // ✅ prevent duplicate calls
+    if (this.loading && this.currentCategory === category) {
+      return;
     }
-  });
-}
+
+    this.currentCategory = category;
+    this.loading = true;
+    this.error = '';
+
+    console.log('🚀 Loading news for:', category);
+
+    this.newsService.getTopHeadlines(category).subscribe({
+
+      next: (res: NewsResponse) => {
+        console.log('✅ API RESPONSE:', res);
+
+        if (!res || !res.articles || res.articles.length === 0) {
+          this.error = 'No news available';
+          this.loading = false;
+          return;
+        }
+
+        this.featured = res.articles[0] || null;
+        this.articles = res.articles.slice(1);
+        this.loading = false;
+      },
+
+      error: (err) => {
+        console.error('❌ API ERROR:', err);
+
+        // ✅ Handle rate limit
+        if (err.status === 429) {
+          this.error = '⚠️ Too many requests. Please wait a few seconds.';
+        }
+        // ✅ Server issue
+        else if (err.status === 500) {
+          this.error = '⚠️ Server error. Try again later.';
+        }
+        // ✅ Not found
+        else if (err.status === 404) {
+          this.error = '⚠️ API route not found.';
+        }
+        // ✅ Fallback
+        else {
+          this.error = 'Failed to load news.';
+        }
+
+        this.loading = false;
+      }
+    });
+  }
+
+  // 🔥 Category click handler (IMPORTANT)
+  loadCategory(category: string) {
+    console.log('📂 Switching category:', category);
+    this.loadNews(category);
+  }
+
+  // 🔄 Retry button support
+  retry() {
+    this.loadNews(this.currentCategory);
+  }
 }

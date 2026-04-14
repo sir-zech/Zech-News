@@ -7,14 +7,27 @@
       <div class="blob blob2"></div>
       <div class="blob blob3"></div>
     </div>
+
     <div class="hero-content">
       <div class="hero-badge">⚡ Live Updates</div>
-      <h1>Stay Ahead with<br><span>Zech News</span></h1>
+
+      <h1>
+        Stay Ahead with<br>
+        <span>Zech News</span>
+      </h1>
+
       <p>Breaking stories, curated for you. Real-time. Reliable.</p>
+
+      <!-- ✅ FIXED: use click instead of router (prevents extra API calls) -->
       <div class="quick-links">
-        <a *ngFor="let q of quickLinks" [routerLink]="['/category', q.value]" class="ql-chip">
+        <button
+          *ngFor="let q of quickLinks"
+          (click)="loadCategory(q.value)"
+          class="ql-chip"
+          [class.active]="currentCategory === q.value">
+
           {{ q.label }}
-        </a>
+        </button>
       </div>
     </div>
   </section>
@@ -22,17 +35,28 @@
   <!-- Featured Article -->
   <section class="featured-wrap" *ngIf="featured && !loading">
     <div class="section-label">✦ Featured Story</div>
-    <div class="featured" (click)="featured && openUrl(featured.url)">
+
+    <div class="featured" (click)="openUrl(featured.url)">
       <div class="featured-img">
-        <img [src]="featured.image || 'https://placehold.co/800x420/2563eb/fff?text=Zech+News'" [alt]="featured.title" />
+        <img
+          [src]="featured.image || 'https://placehold.co/800x420/2563eb/fff?text=Zech+News'"
+          [alt]="featured.title" />
+
         <div class="featured-overlay"></div>
-        <span class="featured-source">{{ featured.source.name }}</span>
+
+        <span class="featured-source">
+          {{ featured.source?.name }}
+        </span>
       </div>
+
       <div class="featured-body">
         <h2>{{ featured.title }}</h2>
         <p>{{ featured.description }}</p>
+
         <div class="featured-meta">
-          <span class="date">{{ featured.publishedAt | date:'MMMM d, y' }}</span>
+          <span class="date">
+            {{ featured.publishedAt | date:'MMMM d, y' }}
+          </span>
           <span class="read-btn">Read Full Story →</span>
         </div>
       </div>
@@ -42,21 +66,34 @@
   <!-- Loading Skeleton -->
   <div class="skeleton-wrap" *ngIf="loading">
     <div class="skeleton sk-featured"></div>
+
     <div class="grid">
       <div class="skeleton sk-card" *ngFor="let i of [1,2,3,4,5,6]"></div>
     </div>
   </div>
 
-  <!-- Error -->
-  <div class="error-state" *ngIf="error">
+  <!-- Error State -->
+  <div class="error-state" *ngIf="error && !loading">
     <div class="error-icon">⚠️</div>
+
     <p>{{ error }}</p>
-    <button (click)="loadNews()" class="retry-btn">Try Again</button>
+
+    <!-- ✅ FIXED: retry uses current category -->
+    <button (click)="retry()" class="retry-btn">
+      Try Again
+    </button>
+  </div>
+
+  <!-- Empty State -->
+  <div class="error-state" *ngIf="!loading && !error && articles.length === 0">
+    <div class="error-icon">📰</div>
+    <p>No news found for this category.</p>
   </div>
 
   <!-- News Grid -->
-  <section class="news-section" *ngIf="!loading && !error">
+  <section class="news-section" *ngIf="!loading && !error && articles.length > 0">
     <div class="section-label">✦ Latest News</div>
+
     <div class="grid">
       <app-news-card
         *ngFor="let article of articles; let i = index"
