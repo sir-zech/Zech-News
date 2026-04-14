@@ -6,22 +6,14 @@ import { NewsResponse } from '../models/article.model';
 @Injectable({ providedIn: 'root' })
 export class NewsService {
 
-  private API_URL = '/api/news';
+  // ✅ FIX: Use Vercel API in localhost, internal API in production
+  private API_URL =
+    window.location.hostname === 'localhost'
+      ? 'https://zech-news.vercel.app/api/news'
+      : '/api/news';
 
-  constructor(private http: HttpClient) {}
-
-  // 🧪 HEALTH CHECK
-  healthCheck(): Observable<any> {
-    console.log('🧪 Calling API health check...');
-    return this.http.get(this.API_URL).pipe(
-      tap(res => {
-        console.log('✅ Health Check Response:', res);
-      }),
-      catchError(err => {
-        console.error('❌ Health Check Error:', err);
-        return throwError(() => err);
-      })
-    );
+  constructor(private http: HttpClient) {
+    console.log('🌐 API URL:', this.API_URL);
   }
 
   // 📰 GET TOP HEADLINES
@@ -34,7 +26,6 @@ export class NewsService {
       tap(res => {
         console.log('✅ Headlines Response:', res);
 
-        // 🔍 Validate response structure
         if (!res || !res.articles) {
           console.warn('⚠️ Invalid response format:', res);
         }
@@ -58,6 +49,19 @@ export class NewsService {
       }),
       catchError(err => {
         console.error('❌ Search Error:', err);
+        return throwError(() => err);
+      })
+    );
+  }
+
+  // 🧪 OPTIONAL HEALTH CHECK (for debugging)
+  healthCheck(): Observable<any> {
+    console.log('🧪 Running health check...');
+
+    return this.http.get(this.API_URL).pipe(
+      tap(res => console.log('✅ Health Check Response:', res)),
+      catchError(err => {
+        console.error('❌ Health Check Error:', err);
         return throwError(() => err);
       })
     );

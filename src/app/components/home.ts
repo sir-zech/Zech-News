@@ -31,15 +31,40 @@ export class HomeComponent implements OnInit {
   ngOnInit() { this.loadNews(); }
 openUrl(url: string) { window.open(url, '_blank'); }
   loadNews() {
-    this.loading = true;
-    this.error = '';
-    this.newsService.getTopHeadlines('general').subscribe({
-      next: (res: NewsResponse) => {
-        this.featured = res.articles[0] || null;
-        this.articles = res.articles.slice(1);
+  this.loading = true;
+  this.error = '';
+
+  console.log('🚀 Calling /api/news...');
+
+  this.newsService.getTopHeadlines('general').subscribe({
+    next: (res: any) => {
+      console.log('✅ FULL RESPONSE:', res);
+
+      if (!res || !res.articles) {
+        console.error('⚠️ Invalid response format:', res);
+        this.error = 'Invalid API response';
         this.loading = false;
-      },
-      error: () => { this.error = 'Failed to load news. Check your API key.'; this.loading = false; }
-    });
-  }
+        return;
+      }
+
+      this.featured = res.articles[0] || null;
+      this.articles = res.articles.slice(1);
+      this.loading = false;
+    },
+
+    error: (err) => {
+      console.error('❌ API ERROR:', err);
+
+      if (err.status === 500) {
+        this.error = 'Server error (Vercel API issue)';
+      } else if (err.status === 404) {
+        this.error = 'API route not found (/api/news missing)';
+      } else {
+        this.error = 'Failed to load news';
+      }
+
+      this.loading = false;
+    }
+  });
+}
 }
