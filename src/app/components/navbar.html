@@ -1,0 +1,36 @@
+<nav class="navbar" [class.scrolled]="scrolled">
+  <div class="nav-inner">
+    <a routerLink="/" class="nav-brand">
+      <div class="brand-icon">Z</div>
+      <span>Zech<strong>News</strong></span>
+    </a>
+
+    <div class="nav-links" [class.open]="menuOpen">
+      <a *ngFor="let cat of categories"
+         [routerLink]="['/category', cat.value]"
+         routerLinkActive="active"
+         class="cat-link"
+         (click)="menuOpen=false">
+        <span class="cat-icon">{{ cat.icon }}</span>
+        {{ cat.label }}
+      </a>
+      <div class="nav-search mobile-search">
+        <input [(ngModel)]="searchQuery" (keyup.enter)="onSearch()" placeholder="Search…" />
+        <button (click)="onSearch()" class="search-btn">🔍</button>
+      </div>
+    </div>
+
+    <div class="nav-actions">
+      <div class="nav-search desktop-search">
+        <input [(ngModel)]="searchQuery" (keyup.enter)="onSearch()" placeholder="Search news…" />
+        <button (click)="onSearch()" class="search-btn">🔍</button>
+      </div>
+      <button class="theme-btn" (click)="toggle()" [title]="dark ? 'Light mode' : 'Dark mode'">
+        {{ dark ? '☀️' : '🌙' }}
+      </button>
+      <button class="hamburger" (click)="toggleMenu()" [class.open]="menuOpen">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </div>
+</nav>

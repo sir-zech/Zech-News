@@ -1,0 +1,35 @@
+<div class="category-page">
+  <div class="cat-header">
+    <div class="cat-header-inner">
+      <div class="cat-accent-bar"></div>
+      <div>
+        <div class="cat-eyebrow">{{ isSearch ? 'Search Results' : 'Category' }}</div>
+        <h2>{{ isSearch ? searchQuery : (categoryName | titlecase) }}</h2>
+      </div>
+    </div>
+  </div>
+
+  <!-- Skeleton -->
+  <div class="grid" *ngIf="loading">
+    <div class="skeleton sk-card" *ngFor="let i of [1,2,3,4,5,6]"></div>
+  </div>
+
+  <div class="error-state" *ngIf="error">
+    <div class="error-icon">⚠️</div>
+    <p>{{ error }}</p>
+    <button (click)="loadNews()" class="retry-btn">Try Again</button>
+  </div>
+
+  <div class="grid" *ngIf="!loading && !error">
+    <app-news-card
+      *ngFor="let article of articles; let i = index"
+      [article]="article"
+      [style.animation-delay]="i * 60 + 'ms'">
+    </app-news-card>
+  </div>
+
+  <div class="empty" *ngIf="!loading && !error && articles.length === 0">
+    <div class="empty-icon">🔍</div>
+    <p>No articles found.</p>
+  </div>
+</div>

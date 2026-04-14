@@ -1,0 +1,75 @@
+.category-page {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 2.5rem 1.5rem 4rem;
+}
+
+.cat-header {
+  margin-bottom: 2.5rem;
+  animation: fadeUp 0.5s ease both;
+
+  .cat-header-inner {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+
+  .cat-accent-bar {
+    width: 6px;
+    height: 56px;
+    background: linear-gradient(to bottom, var(--accent), #8b5cf6);
+    border-radius: 3px;
+    flex-shrink: 0;
+  }
+
+  .cat-eyebrow {
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 0.2rem;
+  }
+
+  h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 2.2rem;
+    font-weight: 900;
+    color: var(--text);
+    letter-spacing: -1px;
+  }
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(290px, 1fr));
+  gap: 1.5rem;
+}
+
+.skeleton {
+  background: linear-gradient(90deg, var(--bg3) 25%, var(--bg2) 50%, var(--bg3) 75%);
+  background-size: 600px 100%;
+  animation: shimmer 1.4s infinite linear;
+}
+.sk-card { height: 340px; border-radius: 16px; }
+
+.empty, .error-state {
+  text-align: center;
+  padding: 5rem 2rem;
+
+  .empty-icon, .error-icon { font-size: 3rem; margin-bottom: 1rem; }
+  p { color: var(--text2); margin-bottom: 1.5rem; }
+
+  .retry-btn {
+    background: var(--accent);
+    color: #fff;
+    border: none;
+    padding: 0.65rem 2rem;
+    border-radius: 10px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    &:hover { background: var(--accent2); transform: translateY(-2px); }
+  }
+}

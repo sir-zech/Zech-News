@@ -1,0 +1,18 @@
+<div class="card" (click)="openArticle()">
+  <div class="card-img">
+    <img
+      [src]="imgError ? 'https://placehold.co/400x220/2563eb/fff?text=Zech+News' : (article.image || 'https://placehold.co/400x220/2563eb/fff?text=Zech+News')"
+      [alt]="article.title"
+      (error)="onImgError()" />
+    <div class="card-img-overlay"></div>
+    <span class="source-badge">{{ article.source.name }}</span>
+  </div>
+  <div class="card-body">
+    <h3>{{ article.title }}</h3>
+    <p>{{ article.description }}</p>
+    <div class="card-footer">
+      <span class="date">📅 {{ article.publishedAt | date:'MMM d, y' }}</span>
+      <span class="read-more">Read →</span>
+    </div>
+  </div>
+</div>

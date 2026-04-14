@@ -1,59 +1,120 @@
-# NewsApp
+# 📰 ZechNews
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 21.0.3.
+> ⚡ _Fresh news. Fast UI. Zero noise._
 
-## Development server
+A modern, responsive **news web app** built with Angular — designed for speed, simplicity, and a smooth mobile experience.
+Because reading news shouldn’t feel like opening 100 popups 💀
 
-To start a local development server, run:
+---
+
+## 🚀 Features
+
+✨ Clean & minimal UI
+📱 Fully responsive (mobile-first)
+🌙 Dark / Light mode toggle
+🔍 Real-time search
+🧭 Category-based navigation
+⚡ Fast navigation using Angular routing
+🍔 Mobile-friendly hamburger menu
+🎯 Smooth scroll-based navbar effects
+
+---
+
+## 🧠 Tech Stack
+
+- ⚙️ Angular (Standalone Components)
+- 🎨 SCSS (Custom styling)
+- 🧩 TypeScript
+- 🌐 News API integration _(or your backend if used)_
+
+---
+
+## 📸 Preview
+
+> _Looks clean. Feels fast. Works everywhere._
+
+---
+
+## 🛠️ Installation
 
 ```bash
+# Clone the repo
+git clone https://github.com/your-username/zechnews.git
+
+# Navigate into project
+cd zechnews
+
+# Install dependencies
+npm install
+
+# Run the app
 ng serve
 ```
 
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
+---
 
-## Code scaffolding
+## 🌍 Usage
 
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
+- Browse news by categories like 🌍 World, 💻 Tech, ⚽ Sports
+- Use the 🔍 search bar to find specific topics
+- Toggle 🌙 dark mode for late-night scrolling
+- Enjoy smooth mobile navigation 📱
 
-```bash
-ng generate component component-name
+---
+
+## ⚡ Project Structure (Simplified)
+
+```
+src/
+ ├── app/
+ │   ├── components/
+ │   │   └── navbar/
+ │   ├── features/
+ │   │   └── categories/
+ │   └── services/
+ └── assets/
 ```
 
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
+---
 
-```bash
-ng generate --help
-```
+## 🎨 UI Highlights
 
-## Building
+- Sticky navbar with **scroll effects**
+- Animated mobile menu
+- Clean typography & spacing
+- Optimized for readability
 
-To build the project run:
+---
 
-```bash
-ng build
-```
+## 🧪 Future Improvements
 
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
+- 🔔 Push notifications
+- 🧠 AI-based news recommendations
+- 📌 Bookmark/save articles
+- 🌐 Multi-language support
 
-## Running unit tests
+---
 
-To execute unit tests with the [Vitest](https://vitest.dev/) test runner, use the following command:
+## 🤝 Contributing
 
-```bash
-ng test
-```
+Pull requests are welcome!
+If you’ve got cool ideas — don’t gatekeep 😤
 
-## Running end-to-end tests
+---
 
-For end-to-end (e2e) testing, run:
+## 📄 License
 
-```bash
-ng e2e
-```
+MIT License — use it, remix it, build on it 🚀
 
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
+---
 
-## Additional Resources
+## 👨‍💻 Author
 
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+**Naveen B**
+
+> _"I code, therefore I debug."_
+
+> It worked on localhost…
+> That’s all I can say.
+
+---

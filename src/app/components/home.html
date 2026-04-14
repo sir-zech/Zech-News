@@ -1,0 +1,69 @@
+<div class="home">
+
+  <!-- Hero Banner -->
+  <section class="hero">
+    <div class="hero-bg">
+      <div class="blob blob1"></div>
+      <div class="blob blob2"></div>
+      <div class="blob blob3"></div>
+    </div>
+    <div class="hero-content">
+      <div class="hero-badge">⚡ Live Updates</div>
+      <h1>Stay Ahead with<br><span>Zech News</span></h1>
+      <p>Breaking stories, curated for you. Real-time. Reliable.</p>
+      <div class="quick-links">
+        <a *ngFor="let q of quickLinks" [routerLink]="['/category', q.value]" class="ql-chip">
+          {{ q.label }}
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Featured Article -->
+  <section class="featured-wrap" *ngIf="featured && !loading">
+    <div class="section-label">✦ Featured Story</div>
+    <div class="featured" (click)="featured && openUrl(featured.url)">
+      <div class="featured-img">
+        <img [src]="featured.image || 'https://placehold.co/800x420/2563eb/fff?text=Zech+News'" [alt]="featured.title" />
+        <div class="featured-overlay"></div>
+        <span class="featured-source">{{ featured.source.name }}</span>
+      </div>
+      <div class="featured-body">
+        <h2>{{ featured.title }}</h2>
+        <p>{{ featured.description }}</p>
+        <div class="featured-meta">
+          <span class="date">{{ featured.publishedAt | date:'MMMM d, y' }}</span>
+          <span class="read-btn">Read Full Story →</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Loading Skeleton -->
+  <div class="skeleton-wrap" *ngIf="loading">
+    <div class="skeleton sk-featured"></div>
+    <div class="grid">
+      <div class="skeleton sk-card" *ngFor="let i of [1,2,3,4,5,6]"></div>
+    </div>
+  </div>
+
+  <!-- Error -->
+  <div class="error-state" *ngIf="error">
+    <div class="error-icon">⚠️</div>
+    <p>{{ error }}</p>
+    <button (click)="loadNews()" class="retry-btn">Try Again</button>
+  </div>
+
+  <!-- News Grid -->
+  <section class="news-section" *ngIf="!loading && !error">
+    <div class="section-label">✦ Latest News</div>
+    <div class="grid">
+      <app-news-card
+        *ngFor="let article of articles; let i = index"
+        [article]="article"
+        [style.animation-delay]="i * 60 + 'ms'">
+      </app-news-card>
+    </div>
+  </section>
+
+</div>
