@@ -1,27 +1,65 @@
-export default async function handler(req, res) {
-  try {
-    const { category = 'general', q } = req.query;
+import { Injectable } from '@angular/core';
+import { HttpClient, HttpParams } from '@angular/common/http';
+import { Observable, tap, catchError, throwError } from 'rxjs';
+import { NewsResponse } from '../models/article.model';
 
-    const API_KEY = process.env.GNEWS_API_KEY;
+@Injectable({ providedIn: 'root' })
+export class NewsService {
 
-    if (!API_KEY) {
-      return res.status(500).json({ error: "API KEY MISSING" });
-    }
+  private API_URL = '/api/news';
 
-    let url = `https://gnews.io/api/v4/top-headlines?token=${API_KEY}&lang=en&max=12`;
+  constructor(private http: HttpClient) {}
 
-    if (q) {
-      url = `https://gnews.io/api/v4/search?q=${q}&token=${API_KEY}&lang=en&max=12`;
-    } else {
-      url += `&category=${category}`;
-    }
+  // 🧪 HEALTH CHECK
+  healthCheck(): Observable<any> {
+    console.log('🧪 Calling API health check...');
+    return this.http.get(this.API_URL).pipe(
+      tap(res => {
+        console.log('✅ Health Check Response:', res);
+      }),
+      catchError(err => {
+        console.error('❌ Health Check Error:', err);
+        return throwError(() => err);
+      })
+    );
+  }
 
-    const response = await fetch(url);
-    const data = await response.json();
+  // 📰 GET TOP HEADLINES
+  getTopHeadlines(category: string = 'general'): Observable<NewsResponse> {
+    console.log('📰 Fetching headlines for:', category);
 
-    return res.status(200).json(data);
+    const params = new HttpParams().set('category', category);
 
-  } catch (error) {
-    return res.status(500).json({ error: "Server error" });
+    return this.http.get<NewsResponse>(this.API_URL, { params }).pipe(
+      tap(res => {
+        console.log('✅ Headlines Response:', res);
+
+        // 🔍 Validate response structure
+        if (!res || !res.articles) {
+          console.warn('⚠️ Invalid response format:', res);
+        }
+      }),
+      catchError(err => {
+        console.error('❌ Headlines Error:', err);
+        return throwError(() => err);
+      })
+    );
+  }
+
+  // 🔍 SEARCH NEWS
+  searchNews(query: string): Observable<NewsResponse> {
+    console.log('🔍 Searching for:', query);
+
+    const params = new HttpParams().set('q', query);
+
+    return this.http.get<NewsResponse>(this.API_URL, { params }).pipe(
+      tap(res => {
+        console.log('✅ Search Response:', res);
+      }),
+      catchError(err => {
+        console.error('❌ Search Error:', err);
+        return throwError(() => err);
+      })
+    );
   }
 }
