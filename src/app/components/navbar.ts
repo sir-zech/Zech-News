@@ -3,6 +3,7 @@ import { RouterLink, RouterLinkActive, Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { BookmarkService } from '../services/bookmark';
+import { LocationService } from '../services/location';
 
 @Component({
   selector: 'app-navbar',
@@ -19,6 +20,10 @@ export class NavbarComponent {
   dark = false;
   scrolled = false;
 
+  showLocationDropdown = false;
+  locationQuery = '';
+  locationResults: { label: string; country: string; countryCode: string; city: string }[] = [];
+
   categories = [
     { label: 'World', value: 'world', icon: '🌍' },
     { label: 'Tech', value: 'technology', icon: '💻' },
@@ -28,7 +33,11 @@ export class NavbarComponent {
     { label: 'Health', value: 'health', icon: '❤️' }
   ];
 
-  constructor(private router: Router, public bookmarkService: BookmarkService) {
+  constructor(
+    private router: Router,
+    public bookmarkService: BookmarkService,
+    public locationService: LocationService
+  ) {
     const saved = localStorage.getItem('zech-theme');
     this.dark = saved === 'dark';
   }
@@ -50,6 +59,36 @@ export class NavbarComponent {
 
   toggleMenu() {
     this.menuOpen = !this.menuOpen;
+    if (this.menuOpen) this.showLocationDropdown = false;
+  }
+
+  toggleLocationDropdown(e?: Event) {
+    e?.stopPropagation();
+    this.showLocationDropdown = !this.showLocationDropdown;
+    if (!this.showLocationDropdown) {
+      this.locationQuery = '';
+      this.locationResults = [];
+    }
+    if (this.showLocationDropdown) this.menuOpen = false;
+  }
+
+  onLocationSearch() {
+    this.locationResults = this.locationService.searchLocations(this.locationQuery);
+  }
+
+  selectLocation(result: { label: string; country: string; countryCode: string; city: string }) {
+    this.locationService.setManual(result.country, result.countryCode, result.city);
+    this.locationQuery = '';
+    this.locationResults = [];
+    this.showLocationDropdown = false;
+  }
+
+  autoDetectLocation() {
+    (this.locationService as any).cached = null;
+    this.showLocationDropdown = false;
+    this.locationQuery = '';
+    this.locationResults = [];
+    this.locationService.detect();
   }
 
   @HostListener('document:click', ['$event'])
@@ -57,6 +96,11 @@ export class NavbarComponent {
     const target = e.target as HTMLElement;
     if (!target.closest('.navbar')) {
       this.menuOpen = false;
+    }
+    if (!target.closest('.loc-wrap')) {
+      this.showLocationDropdown = false;
+      this.locationQuery = '';
+      this.locationResults = [];
     }
   }
 

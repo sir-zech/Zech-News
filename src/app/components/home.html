@@ -123,42 +123,7 @@
 
   <!-- Local News -->
   <section class="local-section">
-    <div class="local-header">
-      <div class="local-title-row">
-        <div class="section-label">📍 Local News — {{ userLocation?.city || userLocation?.country || 'Detecting...' }}</div>
-        <div class="local-actions">
-          <button class="loc-btn" (click)="toggleLocationSearch()" title="Change location">
-            🔍 Change Location
-          </button>
-          <button class="loc-btn loc-btn-auto" (click)="resetToAutoLocation()" *ngIf="showLocationSearch || userLocation" title="Auto-detect">
-            📡 Auto-Detect
-          </button>
-        </div>
-      </div>
-
-      <div class="location-search" *ngIf="showLocationSearch">
-        <div class="loc-input-wrap">
-          <input
-            type="text"
-            [(ngModel)]="locationQuery"
-            (ngModelChange)="onLocationSearch()"
-            placeholder="Search country or state... (e.g. California, India, Tokyo)"
-            class="loc-input"
-            autofocus />
-        </div>
-        <div class="loc-results" *ngIf="locationResults.length > 0">
-          <button
-            class="loc-result"
-            *ngFor="let r of locationResults"
-            (click)="selectLocation(r)">
-            📍 {{ r.label }}
-          </button>
-        </div>
-        <div class="loc-no-results" *ngIf="locationQuery.length >= 2 && locationResults.length === 0">
-          No matching locations found.
-        </div>
-      </div>
-    </div>
+    <div class="section-label">📍 Local News — {{ locationService.location()?.city || locationService.location()?.country || 'Detecting...' }}</div>
 
     <div class="grid" *ngIf="!localLoading && localArticles.length > 0">
       <app-news-card
@@ -174,8 +139,8 @@
       </div>
     </div>
 
-    <div class="local-empty" *ngIf="!localLoading && localArticles.length === 0 && userLocation">
-      No local news found for {{ userLocation.city || userLocation.country }}. Try a different location.
+    <div class="local-empty" *ngIf="!localLoading && localArticles.length === 0 && locationService.location()">
+      No local news found for {{ locationService.location()?.city || locationService.location()?.country }}. Try a different location via 📍 in the navbar.
     </div>
   </section>
 
@@ -231,6 +196,25 @@
 
   <div class="skeleton-wrap" *ngIf="spaceLoading">
     <div class="section-label">🚀 Loading space news...</div>
+    <div class="grid">
+      <div class="skeleton sk-card" *ngFor="let i of [1,2,3]"></div>
+    </div>
+  </div>
+
+  <!-- Reddit -->
+  <section class="hn-section" *ngIf="!redditLoading && redditArticles.length > 0">
+    <div class="section-label">🔴 Reddit — r/news</div>
+    <div class="grid">
+      <app-news-card
+        *ngFor="let article of redditArticles; let i = index"
+        [article]="article"
+        [style.animation-delay]="i * 60 + 'ms'">
+      </app-news-card>
+    </div>
+  </section>
+
+  <div class="skeleton-wrap" *ngIf="redditLoading">
+    <div class="section-label">🔴 Loading Reddit...</div>
     <div class="grid">
       <div class="skeleton sk-card" *ngFor="let i of [1,2,3]"></div>
     </div>

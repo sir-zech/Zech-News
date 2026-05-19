@@ -89,6 +89,22 @@ export class NewsService {
     );
   }
 
+  getRedditNews(limit = 6, sub = 'news'): Observable<NewsResponse> {
+    const key = `reddit-${sub}-${limit}`;
+    const cached = this.getFromCache(key);
+    if (cached) return of(cached);
+
+    const params = new HttpParams()
+      .set('limit', limit.toString())
+      .set('sub', sub);
+
+    return this.http.get<NewsResponse>('/api/reddit', { params }).pipe(
+      map(res => { this.setCache(key, res); return res; }),
+      catchError(() => of({ totalArticles: 0, articles: [] })),
+      shareReplay(1)
+    );
+  }
+
   getSpaceNews(limit = 6): Observable<NewsResponse> {
     const key = `space-${limit}`;
     const cached = this.getFromCache(key);

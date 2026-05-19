@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, effect } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
@@ -22,6 +22,7 @@ export class HomeComponent implements OnInit {
   hnArticles: Article[] = [];
   devtoArticles: Article[] = [];
   spaceArticles: Article[] = [];
+  redditArticles: Article[] = [];
   localArticles: Article[] = [];
   trendingTopics: string[] = [];
 
@@ -29,15 +30,11 @@ export class HomeComponent implements OnInit {
   hnLoading = false;
   devtoLoading = false;
   spaceLoading = false;
+  redditLoading = false;
   localLoading = false;
   error = '';
 
   currentCategory = 'general';
-  userLocation: UserLocation | null = null;
-
-  locationQuery = '';
-  locationResults: { label: string; country: string; countryCode: string; city: string }[] = [];
-  showLocationSearch = false;
 
   selectedLang = 'en';
   languages = [
@@ -70,12 +67,19 @@ export class HomeComponent implements OnInit {
   constructor(
     private newsService: NewsService,
     private smartService: SmartService,
-    private locationService: LocationService,
+    public locationService: LocationService,
     private articleState: ArticleStateService,
     private router: Router
   ) {
     const savedLang = localStorage.getItem('zech-lang');
     if (savedLang) this.selectedLang = savedLang;
+
+    effect(() => {
+      const loc = this.locationService.location();
+      if (loc) {
+        this.loadLocalNewsFor(loc);
+      }
+    });
   }
 
   ngOnInit() {
@@ -83,7 +87,8 @@ export class HomeComponent implements OnInit {
     this.loadHackerNews();
     this.loadDevToNews();
     this.loadSpaceNews();
-    this.detectLocation();
+    this.loadRedditNews();
+    this.locationService.detect();
   }
 
   openArticle(article: Article) {
@@ -157,17 +162,20 @@ export class HomeComponent implements OnInit {
     });
   }
 
-  async detectLocation() {
-    try {
-      this.userLocation = await this.locationService.detect();
-      this.loadLocalNews();
-    } catch {}
+  loadRedditNews() {
+    this.redditLoading = true;
+    this.newsService.getRedditNews(6).subscribe({
+      next: (res) => {
+        this.redditArticles = this.smartService.enrichAll(res.articles || []);
+        this.redditLoading = false;
+      },
+      error: () => { this.redditLoading = false; }
+    });
   }
 
-  loadLocalNews() {
-    if (!this.userLocation) return;
+  private loadLocalNewsFor(loc: UserLocation) {
     this.localLoading = true;
-    this.newsService.getLocalNews(this.userLocation.countryCode, this.selectedLang).subscribe({
+    this.newsService.getLocalNews(loc.countryCode, this.selectedLang).subscribe({
       next: (res) => {
         this.localArticles = this.smartService.enrichAll(res.articles || []).slice(0, 6);
         this.localLoading = false;
@@ -185,7 +193,8 @@ export class HomeComponent implements OnInit {
     localStorage.setItem('zech-lang', lang);
     this.newsService.clearCache();
     this.loadNews(this.currentCategory);
-    if (this.userLocation) this.loadLocalNews();
+    const loc = this.locationService.location();
+    if (loc) this.loadLocalNewsFor(loc);
   }
 
   retry() {
@@ -194,36 +203,5 @@ export class HomeComponent implements OnInit {
 
   getLangLabel(): string {
     return this.languages.find(l => l.code === this.selectedLang)?.label || 'English';
-  }
-
-  onLocationSearch() {
-    this.locationResults = this.locationService.searchLocations(this.locationQuery);
-  }
-
-  selectLocation(result: { label: string; country: string; countryCode: string; city: string }) {
-    this.locationService.setManual(result.country, result.countryCode, result.city);
-    this.userLocation = { country: result.country, countryCode: result.countryCode, city: result.city };
-    this.locationQuery = '';
-    this.locationResults = [];
-    this.showLocationSearch = false;
-    this.newsService.clearCache();
-    this.loadLocalNews();
-  }
-
-  toggleLocationSearch() {
-    this.showLocationSearch = !this.showLocationSearch;
-    if (!this.showLocationSearch) {
-      this.locationQuery = '';
-      this.locationResults = [];
-    }
-  }
-
-  resetToAutoLocation() {
-    this.locationService['cached'] = null;
-    this.showLocationSearch = false;
-    this.locationQuery = '';
-    this.locationResults = [];
-    this.newsService.clearCache();
-    this.detectLocation();
   }
 }

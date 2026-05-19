@@ -4,7 +4,8 @@
       "PowerShell(npx ng build 2>&1 | Select-Object -Last 80)",
       "PowerShell(npx ng build 2>&1 | Select-Object -Last 20)",
       "PowerShell(npx ng build 2>&1 | Select-Object -Last 15)",
-      "PowerShell(Remove-Item *)"
+      "PowerShell(Remove-Item *)",
+      "PowerShell(npx ng build 2>&1 | Select-Object -Last 40)"
     ]
   }
 }

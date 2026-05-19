@@ -33,6 +33,43 @@
         <input [(ngModel)]="searchQuery" (keyup.enter)="onSearch()" placeholder="Search news…" />
         <button (click)="onSearch()" class="search-btn">🔍</button>
       </div>
+
+      <div class="loc-wrap">
+        <button class="loc-btn-nav" (click)="toggleLocationDropdown($event)" title="Location">
+          📍
+          <span class="loc-nav-label" *ngIf="locationService.location()">
+            {{ locationService.location()?.city || locationService.location()?.country || '' }}
+          </span>
+        </button>
+        <div class="loc-dropdown" *ngIf="showLocationDropdown" (click)="$event.stopPropagation()">
+          <div class="loc-current" *ngIf="locationService.location()">
+            📍 {{ locationService.location()?.city ? locationService.location()?.city + ', ' : '' }}{{ locationService.location()?.country }}
+          </div>
+          <div class="loc-search-wrap">
+            <input
+              type="text"
+              [(ngModel)]="locationQuery"
+              (ngModelChange)="onLocationSearch()"
+              placeholder="Search country or state..."
+              class="loc-search-input" />
+          </div>
+          <div class="loc-results" *ngIf="locationResults.length > 0">
+            <button
+              class="loc-result-item"
+              *ngFor="let r of locationResults"
+              (click)="selectLocation(r)">
+              📍 {{ r.label }}
+            </button>
+          </div>
+          <div class="loc-no-results" *ngIf="locationQuery.length >= 2 && locationResults.length === 0">
+            No matching locations.
+          </div>
+          <button class="loc-auto-btn" (click)="autoDetectLocation()">
+            📡 Auto-Detect
+          </button>
+        </div>
+      </div>
+
       <a routerLink="/bookmarks" class="bookmark-btn desktop-only" title="Bookmarks">
         🔖
         <span class="bk-badge" *ngIf="bookmarkService.count() > 0">{{ bookmarkService.count() }}</span>
