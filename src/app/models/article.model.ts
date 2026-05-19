@@ -9,6 +9,10 @@ export interface Article {
     name: string;
     url: string;
   };
+  readingTime?: number;
+  sentiment?: 'positive' | 'neutral' | 'negative';
+  keywords?: string[];
+  apiSource?: string;
 }
 
 export interface NewsResponse {

@@ -1,0 +1,75 @@
+<div class="article-page" *ngIf="article">
+  <button class="back-btn" (click)="goBack()">← Back</button>
+
+  <article class="article-container">
+    <div class="article-hero">
+      <img
+        [src]="imgError ? 'https://placehold.co/900x450/2563eb/fff?text=Zech+News' : (article.image || 'https://placehold.co/900x450/2563eb/fff?text=Zech+News')"
+        [alt]="article.title"
+        (error)="onImgError()"
+        class="hero-img" />
+      <div class="hero-overlay"></div>
+      <div class="hero-meta">
+        <span class="source-tag">{{ article.source.name }}</span>
+        <span class="api-tag" *ngIf="article.apiSource">{{ article.apiSource }}</span>
+      </div>
+    </div>
+
+    <div class="article-content">
+      <div class="article-toolbar">
+        <div class="toolbar-left">
+          <span class="meta-item">📅 {{ article.publishedAt | date:'MMMM d, y, h:mm a' }}</span>
+          <span class="meta-item">⏱️ {{ article.readingTime }} min read</span>
+          <span class="meta-item sentiment-{{ article.sentiment }}">
+            {{ getSentimentIcon() }} {{ getSentimentLabel() }}
+          </span>
+        </div>
+        <div class="toolbar-right">
+          <button class="tool-btn" (click)="toggleTts()" [title]="ttsService.speaking() ? 'Stop reading' : 'Read aloud'">
+            {{ ttsService.speaking() ? (ttsService.paused() ? '▶️' : '⏸️') : '🔊' }}
+          </button>
+          <button class="tool-btn" (click)="toggleBookmark()" [title]="isBookmarked ? 'Remove bookmark' : 'Bookmark'">
+            {{ isBookmarked ? '🔖' : '🏷️' }}
+          </button>
+          <button class="tool-btn" (click)="share()" *ngIf="shareSupported" title="Share">
+            📤
+          </button>
+          <button class="tool-btn" (click)="copyLink()" title="Copy link">
+            🔗
+          </button>
+        </div>
+      </div>
+
+      <h1>{{ article.title }}</h1>
+
+      <div class="keywords" *ngIf="article.keywords && article.keywords.length > 0">
+        <span class="keyword" *ngFor="let kw of article.keywords">#{{ kw }}</span>
+      </div>
+
+      <div class="summary-section">
+        <div class="summary-header">
+          <span class="summary-icon">✦</span>
+          <span>AI Summary</span>
+        </div>
+        <ul class="summary-points">
+          <li *ngFor="let point of summaryPoints">{{ point }}</li>
+        </ul>
+      </div>
+
+      <div class="article-body" *ngIf="article.description">
+        <p>{{ article.description }}</p>
+      </div>
+
+      <div class="article-body content-text" *ngIf="article.content">
+        <p>{{ article.content }}</p>
+      </div>
+
+      <div class="read-full">
+        <button class="full-btn" (click)="openOriginal()">
+          Read Full Article on {{ article.source.name }} →
+        </button>
+        <p class="ad-note">Ad-free summary powered by Zech News</p>
+      </div>
+    </div>
+  </article>
+</div>

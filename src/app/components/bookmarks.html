@@ -1,0 +1,30 @@
+<div class="bookmarks-page">
+  <div class="bk-header">
+    <div class="bk-header-inner">
+      <div class="bk-accent-bar"></div>
+      <div>
+        <div class="bk-eyebrow">Saved</div>
+        <h2>Your Bookmarks</h2>
+      </div>
+    </div>
+    <button
+      class="clear-btn"
+      (click)="clearAll()"
+      *ngIf="bookmarkService.count() > 0">
+      Clear All
+    </button>
+  </div>
+
+  <div class="grid" *ngIf="bookmarkService.count() > 0">
+    <app-news-card
+      *ngFor="let article of bookmarkService.bookmarks(); let i = index"
+      [article]="article"
+      [style.animation-delay]="i * 60 + 'ms'">
+    </app-news-card>
+  </div>
+
+  <div class="empty" *ngIf="bookmarkService.count() === 0">
+    <div class="empty-icon">🔖</div>
+    <p>No bookmarks yet. Save articles to read later.</p>
+  </div>
+</div>

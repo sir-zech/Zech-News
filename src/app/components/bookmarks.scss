@@ -1,0 +1,76 @@
+.bookmarks-page {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 2.5rem 1.5rem 4rem;
+}
+
+.bk-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2.5rem;
+  animation: fadeUp 0.5s ease both;
+
+  .bk-header-inner {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+
+  .bk-accent-bar {
+    width: 6px;
+    height: 56px;
+    background: linear-gradient(to bottom, var(--accent), #8b5cf6);
+    border-radius: 3px;
+    flex-shrink: 0;
+  }
+
+  .bk-eyebrow {
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 0.2rem;
+  }
+
+  h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 2.2rem;
+    font-weight: 900;
+    color: var(--text);
+    letter-spacing: -1px;
+  }
+}
+
+.clear-btn {
+  background: none;
+  border: 1px solid var(--border);
+  color: var(--text2);
+  padding: 0.5rem 1.2rem;
+  border-radius: 10px;
+  font-size: 0.82rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+
+  &:hover {
+    border-color: #ef4444;
+    color: #ef4444;
+  }
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(290px, 1fr));
+  gap: 1.5rem;
+}
+
+.empty {
+  text-align: center;
+  padding: 5rem 2rem;
+  animation: fadeUp 0.5s ease both;
+
+  .empty-icon { font-size: 3.5rem; margin-bottom: 1rem; }
+  p { color: var(--text2); font-size: 1rem; }
+}

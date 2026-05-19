@@ -2,6 +2,7 @@ import { Component, Output, EventEmitter, HostListener } from '@angular/core';
 import { RouterLink, RouterLinkActive, Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
+import { BookmarkService } from '../services/bookmark';
 
 @Component({
   selector: 'app-navbar',
@@ -11,14 +12,11 @@ import { CommonModule } from '@angular/common';
   styleUrls: ['./navbar.scss']
 })
 export class NavbarComponent {
-
   @Output() themeToggle = new EventEmitter<void>();
 
   searchQuery = '';
   menuOpen = false;
   dark = false;
-
-  // ✅ FIX: scroll state
   scrolled = false;
 
   categories = [
@@ -30,12 +28,11 @@ export class NavbarComponent {
     { label: 'Health', value: 'health', icon: '❤️' }
   ];
 
-  constructor(private router: Router) {
+  constructor(private router: Router, public bookmarkService: BookmarkService) {
     const saved = localStorage.getItem('zech-theme');
     this.dark = saved === 'dark';
   }
 
-  // 🔍 Search
   onSearch() {
     if (this.searchQuery.trim()) {
       this.router.navigate(['/category', 'search'], {
@@ -45,19 +42,16 @@ export class NavbarComponent {
     }
   }
 
-  // 🌙 Theme toggle
   toggle() {
     this.dark = !this.dark;
     localStorage.setItem('zech-theme', this.dark ? 'dark' : 'light');
     this.themeToggle.emit();
   }
 
-  // 🍔 Mobile menu
   toggleMenu() {
     this.menuOpen = !this.menuOpen;
   }
 
-  // 📱 Close menu when clicking outside
   @HostListener('document:click', ['$event'])
   onDocClick(e: Event) {
     const target = e.target as HTMLElement;
@@ -66,7 +60,6 @@ export class NavbarComponent {
     }
   }
 
-  // 🚀 Scroll detection (WORKS on mobile too)
   @HostListener('window:scroll', [])
   onScroll() {
     this.scrolled = window.scrollY > 20;
