@@ -74,16 +74,15 @@ export class NewsService {
     );
   }
 
-  getRedditNews(category = 'general', limit = 6): Observable<NewsResponse> {
-    const key = `reddit-${category}-${limit}`;
+  getDevToNews(limit = 6, tag?: string): Observable<NewsResponse> {
+    const key = `devto-${tag || 'top'}-${limit}`;
     const cached = this.getFromCache(key);
     if (cached) return of(cached);
 
-    const params = new HttpParams()
-      .set('category', category)
-      .set('limit', limit.toString());
+    let params = new HttpParams().set('limit', limit.toString());
+    if (tag) params = params.set('tag', tag);
 
-    return this.http.get<NewsResponse>('/api/reddit', { params }).pipe(
+    return this.http.get<NewsResponse>('/api/devto', { params }).pipe(
       map(res => { this.setCache(key, res); return res; }),
       catchError(() => of({ totalArticles: 0, articles: [] })),
       shareReplay(1)

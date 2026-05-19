@@ -198,20 +198,20 @@
     </div>
   </div>
 
-  <!-- Reddit -->
-  <section class="hn-section" *ngIf="!redditLoading && redditArticles.length > 0">
-    <div class="section-label">🔥 Trending on Reddit</div>
+  <!-- Dev.to -->
+  <section class="hn-section" *ngIf="!devtoLoading && devtoArticles.length > 0">
+    <div class="section-label">👩‍💻 Dev Community — Dev.to</div>
     <div class="grid">
       <app-news-card
-        *ngFor="let article of redditArticles; let i = index"
+        *ngFor="let article of devtoArticles; let i = index"
         [article]="article"
         [style.animation-delay]="i * 60 + 'ms'">
       </app-news-card>
     </div>
   </section>
 
-  <div class="skeleton-wrap" *ngIf="redditLoading">
-    <div class="section-label">🔥 Loading Reddit...</div>
+  <div class="skeleton-wrap" *ngIf="devtoLoading">
+    <div class="section-label">👩‍💻 Loading Dev.to...</div>
     <div class="grid">
       <div class="skeleton sk-card" *ngFor="let i of [1,2,3]"></div>
     </div>

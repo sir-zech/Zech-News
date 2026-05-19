@@ -20,14 +20,14 @@ export class HomeComponent implements OnInit {
   articles: Article[] = [];
   featured: Article | null = null;
   hnArticles: Article[] = [];
-  redditArticles: Article[] = [];
+  devtoArticles: Article[] = [];
   spaceArticles: Article[] = [];
   localArticles: Article[] = [];
   trendingTopics: string[] = [];
 
   loading = false;
   hnLoading = false;
-  redditLoading = false;
+  devtoLoading = false;
   spaceLoading = false;
   localLoading = false;
   error = '';
@@ -81,7 +81,7 @@ export class HomeComponent implements OnInit {
   ngOnInit() {
     this.loadNews();
     this.loadHackerNews();
-    this.loadRedditNews();
+    this.loadDevToNews();
     this.loadSpaceNews();
     this.detectLocation();
   }
@@ -135,14 +135,14 @@ export class HomeComponent implements OnInit {
     });
   }
 
-  loadRedditNews() {
-    this.redditLoading = true;
-    this.newsService.getRedditNews(this.currentCategory, 6).subscribe({
+  loadDevToNews() {
+    this.devtoLoading = true;
+    this.newsService.getDevToNews(6).subscribe({
       next: (res) => {
-        this.redditArticles = this.smartService.enrichAll(res.articles || []);
-        this.redditLoading = false;
+        this.devtoArticles = this.smartService.enrichAll(res.articles || []);
+        this.devtoLoading = false;
       },
-      error: () => { this.redditLoading = false; }
+      error: () => { this.devtoLoading = false; }
     });
   }
 
