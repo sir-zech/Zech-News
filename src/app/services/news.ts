@@ -3,9 +3,19 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable, of, map, catchError, shareReplay } from 'rxjs';
 import { NewsResponse } from '../models/article.model';
 
+export interface ExtractedArticle {
+  title: string;
+  description: string;
+  image: string;
+  content: string;
+  paragraphs: string[];
+  wordCount: number;
+  extracted: boolean;
+}
+
 @Injectable({ providedIn: 'root' })
 export class NewsService {
-  private cache = new Map<string, { data: NewsResponse; time: number }>();
+  private cache = new Map<string, { data: any; time: number }>();
   private readonly CACHE_TTL = 120000;
 
   constructor(private http: HttpClient) {}
@@ -64,16 +74,63 @@ export class NewsService {
     );
   }
 
-  private getFromCache(key: string): NewsResponse | null {
+  getRedditNews(category = 'general', limit = 6): Observable<NewsResponse> {
+    const key = `reddit-${category}-${limit}`;
+    const cached = this.getFromCache(key);
+    if (cached) return of(cached);
+
+    const params = new HttpParams()
+      .set('category', category)
+      .set('limit', limit.toString());
+
+    return this.http.get<NewsResponse>('/api/reddit', { params }).pipe(
+      map(res => { this.setCache(key, res); return res; }),
+      catchError(() => of({ totalArticles: 0, articles: [] })),
+      shareReplay(1)
+    );
+  }
+
+  getSpaceNews(limit = 6): Observable<NewsResponse> {
+    const key = `space-${limit}`;
+    const cached = this.getFromCache(key);
+    if (cached) return of(cached);
+
+    const params = new HttpParams().set('limit', limit.toString());
+
+    return this.http.get<NewsResponse>('/api/space', { params }).pipe(
+      map(res => { this.setCache(key, res); return res; }),
+      catchError(() => of({ totalArticles: 0, articles: [] })),
+      shareReplay(1)
+    );
+  }
+
+  extractArticle(url: string): Observable<ExtractedArticle> {
+    const key = `extract-${url}`;
+    const cached = this.getFromCache(key);
+    if (cached) return of(cached);
+
+    const params = new HttpParams().set('url', url);
+
+    return this.http.get<ExtractedArticle>('/api/extract', { params }).pipe(
+      map(res => { this.setCache(key, res); return res; }),
+      catchError(() => of({
+        title: '', description: '', image: '', content: '',
+        paragraphs: [], wordCount: 0, extracted: false
+      }))
+    );
+  }
+
+  private getFromCache(key: string): any | null {
     const entry = this.cache.get(key);
-    if (entry && Date.now() - entry.time < this.CACHE_TTL) {
+    if (!entry) return null;
+    if (Date.now() - entry.time < this.CACHE_TTL) {
       return entry.data;
     }
     this.cache.delete(key);
     return null;
   }
 
-  private setCache(key: string, data: NewsResponse) {
+  private setCache(key: string, data: any) {
     this.cache.set(key, { data, time: Date.now() });
   }
 

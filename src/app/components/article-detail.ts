@@ -5,6 +5,7 @@ import { ArticleStateService } from '../services/article-state';
 import { BookmarkService } from '../services/bookmark';
 import { TtsService } from '../services/tts';
 import { SmartService } from '../services/smart';
+import { NewsService, ExtractedArticle } from '../services/news';
 import { Article } from '../models/article.model';
 
 @Component({
@@ -21,12 +22,19 @@ export class ArticleDetailComponent implements OnInit, OnDestroy {
   imgError = false;
   shareSupported = typeof navigator !== 'undefined' && !!navigator.share;
 
+  fullContent: string[] = [];
+  extracting = false;
+  extractError = '';
+  extracted = false;
+  fullWordCount = 0;
+
   constructor(
     private articleState: ArticleStateService,
     private router: Router,
     public bookmarkService: BookmarkService,
     public ttsService: TtsService,
-    private smartService: SmartService
+    private smartService: SmartService,
+    private newsService: NewsService
   ) {}
 
   ngOnInit() {
@@ -38,10 +46,35 @@ export class ArticleDetailComponent implements OnInit, OnDestroy {
     this.article = this.smartService.enrichArticle(this.article);
     this.summaryPoints = this.smartService.generateSummaryPoints(this.article);
     this.isBookmarked = this.bookmarkService.isBookmarked(this.article.url);
+    this.loadFullArticle();
   }
 
   ngOnDestroy() {
     this.ttsService.stop();
+  }
+
+  loadFullArticle() {
+    if (!this.article) return;
+    this.extracting = true;
+    this.extractError = '';
+
+    this.newsService.extractArticle(this.article.url).subscribe({
+      next: (data: ExtractedArticle) => {
+        this.extracting = false;
+        if (data.extracted && data.paragraphs.length > 0) {
+          this.fullContent = data.paragraphs;
+          this.fullWordCount = data.wordCount;
+          this.extracted = true;
+          if (data.image && !this.article!.image) {
+            this.article!.image = data.image;
+          }
+        }
+      },
+      error: () => {
+        this.extracting = false;
+        this.extractError = 'Could not load full article.';
+      }
+    });
   }
 
   toggleBookmark() {
@@ -51,8 +84,13 @@ export class ArticleDetailComponent implements OnInit, OnDestroy {
 
   toggleTts() {
     if (!this.article) return;
-    const text = [this.article.title, this.article.description, this.article.content]
-      .filter(Boolean).join('. ');
+    let text: string;
+    if (this.extracted && this.fullContent.length > 0) {
+      text = [this.article.title, ...this.fullContent].join('. ');
+    } else {
+      text = [this.article.title, this.article.description, this.article.content]
+        .filter(Boolean).join('. ');
+    }
     this.ttsService.toggle(text);
   }
 
@@ -95,5 +133,12 @@ export class ArticleDetailComponent implements OnInit, OnDestroy {
 
   getSentimentLabel(): string {
     return this.article?.sentiment || 'neutral';
+  }
+
+  get readingTimeFull(): number {
+    if (this.fullWordCount > 0) {
+      return Math.max(1, Math.ceil(this.fullWordCount / 200));
+    }
+    return this.article?.readingTime || 1;
   }
 }

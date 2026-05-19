@@ -198,4 +198,42 @@
     </div>
   </div>
 
+  <!-- Reddit -->
+  <section class="hn-section" *ngIf="!redditLoading && redditArticles.length > 0">
+    <div class="section-label">🔥 Trending on Reddit</div>
+    <div class="grid">
+      <app-news-card
+        *ngFor="let article of redditArticles; let i = index"
+        [article]="article"
+        [style.animation-delay]="i * 60 + 'ms'">
+      </app-news-card>
+    </div>
+  </section>
+
+  <div class="skeleton-wrap" *ngIf="redditLoading">
+    <div class="section-label">🔥 Loading Reddit...</div>
+    <div class="grid">
+      <div class="skeleton sk-card" *ngFor="let i of [1,2,3]"></div>
+    </div>
+  </div>
+
+  <!-- Space News -->
+  <section class="hn-section" *ngIf="!spaceLoading && spaceArticles.length > 0">
+    <div class="section-label">🚀 Space & Science</div>
+    <div class="grid">
+      <app-news-card
+        *ngFor="let article of spaceArticles; let i = index"
+        [article]="article"
+        [style.animation-delay]="i * 60 + 'ms'">
+      </app-news-card>
+    </div>
+  </section>
+
+  <div class="skeleton-wrap" *ngIf="spaceLoading">
+    <div class="section-label">🚀 Loading space news...</div>
+    <div class="grid">
+      <div class="skeleton sk-card" *ngFor="let i of [1,2,3]"></div>
+    </div>
+  </div>
+
 </div>

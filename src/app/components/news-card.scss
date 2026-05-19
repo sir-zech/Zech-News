@@ -81,6 +81,45 @@
 
       &:hover { background: rgba(0,0,0,0.75); }
     }
+
+    &.card-img-placeholder {
+      background: linear-gradient(135deg, var(--accent) 0%, #8b5cf6 50%, #06b6d4 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      .placeholder-content {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 0.3rem;
+        z-index: 1;
+      }
+
+      .placeholder-initial {
+        font-family: 'Playfair Display', serif;
+        font-size: 2.8rem;
+        font-weight: 900;
+        color: rgba(255,255,255,0.9);
+        text-shadow: 0 2px 8px rgba(0,0,0,0.2);
+      }
+
+      .placeholder-domain {
+        font-size: 0.7rem;
+        font-weight: 600;
+        color: rgba(255,255,255,0.7);
+        letter-spacing: 0.5px;
+        max-width: 160px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+
+      .source-badge {
+        background: rgba(0,0,0,0.3);
+        backdrop-filter: blur(8px);
+      }
+    }
   }
 
   .card-body {

@@ -1,7 +1,8 @@
 <div class="card" (click)="openArticle($event)">
-  <div class="card-img">
+  <!-- Image present -->
+  <div class="card-img" *ngIf="hasImage">
     <img
-      [src]="imgError ? 'https://placehold.co/400x220/2563eb/fff?text=Zech+News' : (article.image || 'https://placehold.co/400x220/2563eb/fff?text=Zech+News')"
+      [src]="article.image"
       [alt]="article.title"
       loading="lazy"
       (error)="onImgError()" />
@@ -11,11 +12,25 @@
       <button class="card-action-btn" (click)="toggleBookmark($event)" [title]="isBookmarked() ? 'Remove' : 'Save'">
         {{ isBookmarked() ? '🔖' : '🏷️' }}
       </button>
-      <button class="card-action-btn" (click)="share($event)" title="Share">
-        📤
-      </button>
+      <button class="card-action-btn" (click)="share($event)" title="Share">📤</button>
     </div>
   </div>
+
+  <!-- No image — gradient placeholder -->
+  <div class="card-img card-img-placeholder" *ngIf="!hasImage">
+    <div class="placeholder-content">
+      <span class="placeholder-initial">{{ domainInitial }}</span>
+      <span class="placeholder-domain">{{ domainName }}</span>
+    </div>
+    <span class="source-badge">{{ article.source.name }}</span>
+    <div class="card-actions">
+      <button class="card-action-btn" (click)="toggleBookmark($event)" [title]="isBookmarked() ? 'Remove' : 'Save'">
+        {{ isBookmarked() ? '🔖' : '🏷️' }}
+      </button>
+      <button class="card-action-btn" (click)="share($event)" title="Share">📤</button>
+    </div>
+  </div>
+
   <div class="card-body">
     <div class="card-smart" *ngIf="article.readingTime">
       <span class="reading-time">⏱️ {{ article.readingTime }}m</span>

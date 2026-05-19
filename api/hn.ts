@@ -22,18 +22,33 @@ module.exports = async function handler(req, res) {
       })
     );
 
-    const articles = stories
-      .filter(s => s && s.title && s.url)
-      .map(s => ({
-        title: s.title,
-        description: s.title,
-        content: `${s.title}. Score: ${s.score || 0}. Comments: ${s.descendants || 0}.`,
-        url: s.url,
-        image: '',
-        publishedAt: new Date((s.time || 0) * 1000).toISOString(),
-        source: { name: 'Hacker News', url: 'https://news.ycombinator.com' },
-        apiSource: 'hackernews'
-      }));
+    const articles = await Promise.all(
+      stories
+        .filter(s => s && s.title && s.url)
+        .map(async (s) => {
+          let image = '';
+          try {
+            const domain = new URL(s.url).hostname;
+            image = `https://logo.clearbit.com/${domain}?size=400`;
+          } catch {}
+
+          return {
+            title: s.title,
+            description: s.text
+              ? s.text.replace(/<[^>]*>/g, '').slice(0, 200)
+              : `${s.title} — Score: ${s.score || 0} | ${s.descendants || 0} comments on Hacker News`,
+            content: `${s.title}. Score: ${s.score || 0}. Comments: ${s.descendants || 0}.`,
+            url: s.url,
+            image,
+            publishedAt: new Date((s.time || 0) * 1000).toISOString(),
+            source: {
+              name: 'Hacker News',
+              url: `https://news.ycombinator.com/item?id=${s.id}`
+            },
+            apiSource: 'hackernews'
+          };
+        })
+    );
 
     res.setHeader('Cache-Control', 's-maxage=300, stale-while-revalidate=600');
     return res.status(200).json({

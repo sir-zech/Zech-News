@@ -22,6 +22,27 @@ export class NewsCardComponent {
     private router: Router
   ) {}
 
+  get hasImage(): boolean {
+    return !!(this.article.image) && !this.imgError;
+  }
+
+  get domainInitial(): string {
+    try {
+      const host = new URL(this.article.url).hostname.replace('www.', '');
+      return host.charAt(0).toUpperCase();
+    } catch {
+      return this.article.source?.name?.charAt(0)?.toUpperCase() || 'Z';
+    }
+  }
+
+  get domainName(): string {
+    try {
+      return new URL(this.article.url).hostname.replace('www.', '');
+    } catch {
+      return this.article.source?.name || '';
+    }
+  }
+
   openArticle(e: Event) {
     e.stopPropagation();
     this.articleState.set(this.article);

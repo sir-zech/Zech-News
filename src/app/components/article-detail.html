@@ -2,13 +2,14 @@
   <button class="back-btn" (click)="goBack()">← Back</button>
 
   <article class="article-container">
-    <div class="article-hero">
+    <div class="article-hero" *ngIf="article.image">
       <img
-        [src]="imgError ? 'https://placehold.co/900x450/2563eb/fff?text=Zech+News' : (article.image || 'https://placehold.co/900x450/2563eb/fff?text=Zech+News')"
+        [src]="imgError ? '' : article.image"
         [alt]="article.title"
         (error)="onImgError()"
-        class="hero-img" />
-      <div class="hero-overlay"></div>
+        class="hero-img"
+        *ngIf="!imgError" />
+      <div class="hero-overlay" *ngIf="!imgError"></div>
       <div class="hero-meta">
         <span class="source-tag">{{ article.source.name }}</span>
         <span class="api-tag" *ngIf="article.apiSource">{{ article.apiSource }}</span>
@@ -19,10 +20,11 @@
       <div class="article-toolbar">
         <div class="toolbar-left">
           <span class="meta-item">📅 {{ article.publishedAt | date:'MMMM d, y, h:mm a' }}</span>
-          <span class="meta-item">⏱️ {{ article.readingTime }} min read</span>
+          <span class="meta-item">⏱️ {{ readingTimeFull }} min read</span>
           <span class="meta-item sentiment-{{ article.sentiment }}">
             {{ getSentimentIcon() }} {{ getSentimentLabel() }}
           </span>
+          <span class="meta-item extracted-badge" *ngIf="extracted">✅ Full article</span>
         </div>
         <div class="toolbar-right">
           <button class="tool-btn" (click)="toggleTts()" [title]="ttsService.speaking() ? 'Stop reading' : 'Read aloud'">
@@ -31,12 +33,8 @@
           <button class="tool-btn" (click)="toggleBookmark()" [title]="isBookmarked ? 'Remove bookmark' : 'Bookmark'">
             {{ isBookmarked ? '🔖' : '🏷️' }}
           </button>
-          <button class="tool-btn" (click)="share()" *ngIf="shareSupported" title="Share">
-            📤
-          </button>
-          <button class="tool-btn" (click)="copyLink()" title="Copy link">
-            🔗
-          </button>
+          <button class="tool-btn" (click)="share()" *ngIf="shareSupported" title="Share">📤</button>
+          <button class="tool-btn" (click)="copyLink()" title="Copy link">🔗</button>
         </div>
       </div>
 
@@ -46,6 +44,7 @@
         <span class="keyword" *ngFor="let kw of article.keywords">#{{ kw }}</span>
       </div>
 
+      <!-- AI Summary -->
       <div class="summary-section">
         <div class="summary-header">
           <span class="summary-icon">✦</span>
@@ -56,19 +55,39 @@
         </ul>
       </div>
 
-      <div class="article-body" *ngIf="article.description">
-        <p>{{ article.description }}</p>
+      <!-- Extracting indicator -->
+      <div class="extract-loading" *ngIf="extracting">
+        <div class="extract-spinner"></div>
+        <span>Loading full article...</span>
       </div>
 
-      <div class="article-body content-text" *ngIf="article.content">
-        <p>{{ article.content }}</p>
+      <!-- Full extracted article -->
+      <div class="full-article" *ngIf="extracted && fullContent.length > 0">
+        <div class="full-article-header">
+          <span class="full-icon">📖</span>
+          <span>Full Article — Ad-Free</span>
+          <span class="word-count">{{ fullWordCount }} words</span>
+        </div>
+        <div class="full-article-body">
+          <p *ngFor="let para of fullContent">{{ para }}</p>
+        </div>
+      </div>
+
+      <!-- Fallback: description + content when extraction failed -->
+      <div *ngIf="!extracted && !extracting">
+        <div class="article-body" *ngIf="article.description">
+          <p>{{ article.description }}</p>
+        </div>
+        <div class="article-body content-text" *ngIf="article.content">
+          <p>{{ article.content }}</p>
+        </div>
       </div>
 
       <div class="read-full">
         <button class="full-btn" (click)="openOriginal()">
-          Read Full Article on {{ article.source.name }} →
+          {{ extracted ? 'View Original on' : 'Read Full Article on' }} {{ article.source.name }} →
         </button>
-        <p class="ad-note">Ad-free summary powered by Zech News</p>
+        <p class="ad-note">Ad-free reading powered by Zech News</p>
       </div>
     </div>
   </article>

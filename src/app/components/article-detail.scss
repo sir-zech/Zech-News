@@ -215,6 +215,77 @@ h1 {
   }
 }
 
+/* Extract loading */
+.extract-loading {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  padding: 1.5rem;
+  background: var(--bg3);
+  border-radius: 12px;
+  margin-bottom: 2rem;
+
+  span {
+    font-size: 0.85rem;
+    color: var(--text2);
+    font-weight: 500;
+  }
+
+  .extract-spinner {
+    width: 20px; height: 20px;
+    border: 2px solid var(--border);
+    border-top-color: var(--accent);
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+  }
+}
+
+.extracted-badge {
+  color: #22c55e !important;
+  font-weight: 600 !important;
+}
+
+/* Full article */
+.full-article {
+  margin-bottom: 2rem;
+  animation: fadeUp 0.4s ease both;
+
+  .full-article-header {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: #22c55e;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 1.5rem;
+    padding-bottom: 0.8rem;
+    border-bottom: 2px solid #22c55e33;
+
+    .full-icon { font-size: 1rem; }
+    .word-count {
+      margin-left: auto;
+      font-size: 0.72rem;
+      color: var(--text3);
+      font-weight: 500;
+      text-transform: none;
+      letter-spacing: 0;
+    }
+  }
+
+  .full-article-body {
+    p {
+      font-size: 1.05rem;
+      line-height: 1.95;
+      color: var(--text);
+      margin-bottom: 1.2rem;
+
+      &:last-child { margin-bottom: 0; }
+    }
+  }
+}
+
 .read-full {
   text-align: center;
   padding-top: 2rem;
