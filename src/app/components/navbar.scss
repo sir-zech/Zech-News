@@ -247,10 +247,20 @@
     border-bottom: 1px solid var(--border);
     box-shadow: 0 8px 30px rgba(0,0,0,0.1);
     transform: translateY(-110%);
-    transition: transform 0.3s cubic-bezier(0.4,0,0.2,1);
-    z-index: 199;
+    visibility: hidden;
+    pointer-events: none;
+    opacity: 0;
+    transition: transform 0.3s cubic-bezier(0.4,0,0.2,1),
+                visibility 0.3s,
+                opacity 0.2s;
+    z-index: 99;
 
-    &.open { transform: translateY(0); }
+    &.open {
+      transform: translateY(0);
+      visibility: visible;
+      pointer-events: auto;
+      opacity: 1;
+    }
 
     .cat-link { padding: 0.7rem 1rem; font-size: 0.9rem; }
     .mobile-search { display: flex; margin-top: 0.5rem; width: 100%; }
