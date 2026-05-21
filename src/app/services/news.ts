@@ -33,6 +33,7 @@ export class NewsService {
 
     return this.http.get<NewsResponse>('/api/news', { params }).pipe(
       map(res => { this.setCache(key, res); return res; }),
+      catchError(() => of({ totalArticles: 0, articles: [] })),
       shareReplay(1)
     );
   }
@@ -56,6 +57,7 @@ export class NewsService {
 
     return this.http.get<NewsResponse>('/api/news', { params }).pipe(
       map(res => { this.setCache(key, res); return res; }),
+      catchError(() => of({ totalArticles: 0, articles: [] })),
       shareReplay(1)
     );
   }

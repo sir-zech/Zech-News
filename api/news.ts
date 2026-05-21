@@ -24,22 +24,19 @@ module.exports = async function handler(req, res) {
       url += `&category=${category}`;
     }
 
-    const response = await fetch(url);
+    let data = await fetchGNews(url);
 
-    if (response.status === 429) {
+    if (data === 'rate_limit') {
       return res.status(429).json({ error: "Rate limit exceeded. Please wait." });
     }
 
-    if (!response.ok) {
-      const text = await response.text();
-      return res.status(response.status).json({ error: "GNews API error", details: text });
+    if (!data && (country || lang !== 'en')) {
+      const fallbackUrl = `https://gnews.io/api/v4/top-headlines?token=${API_KEY}&lang=en&max=${max}&category=${category}`;
+      data = await fetchGNews(fallbackUrl);
     }
 
-    let data;
-    try {
-      data = await response.json();
-    } catch (e) {
-      return res.status(500).json({ error: "Invalid JSON from API" });
+    if (!data) {
+      return res.status(502).json({ error: "GNews API unavailable" });
     }
 
     if (data.articles) {
@@ -54,3 +51,14 @@ module.exports = async function handler(req, res) {
     return res.status(500).json({ error: "Server crashed", details: err.message });
   }
 };
+
+async function fetchGNews(url) {
+  try {
+    const response = await fetch(url);
+    if (response.status === 429) return 'rate_limit';
+    if (!response.ok) return null;
+    return await response.json();
+  } catch {
+    return null;
+  }
+}

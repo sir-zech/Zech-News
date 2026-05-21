@@ -107,7 +107,7 @@ export class HomeComponent implements OnInit {
     this.newsService.getTopHeadlines(category, this.selectedLang).subscribe({
       next: (res: NewsResponse) => {
         if (!res?.articles?.length) {
-          this.error = 'No news available';
+          this.error = 'No news available for this language. Try switching language.';
           this.loading = false;
           return;
         }
@@ -115,15 +115,14 @@ export class HomeComponent implements OnInit {
         this.featured = enriched[0] || null;
         this.articles = enriched.slice(1);
         this.trendingTopics = this.smartService.getTrendingTopics(enriched);
+        this.error = '';
         this.loading = false;
       },
       error: (err) => {
         if (err.status === 429) {
           this.error = 'Too many requests. Please wait a few seconds.';
-        } else if (err.status === 500) {
-          this.error = 'Server error. Try again later.';
         } else {
-          this.error = 'Failed to load news.';
+          this.error = 'Failed to load news. Try a different language or category.';
         }
         this.loading = false;
       }
