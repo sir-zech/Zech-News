@@ -1,0 +1,151 @@
+<div class="donate">
+
+  <a routerLink="/" class="back-link">← Back to home</a>
+
+  <section class="donate-hero">
+    <div class="donate-hero-text">
+      <div class="donate-badge">☕ Support the project</div>
+      <h1>Buy me a <span>coffee</span></h1>
+      <p>
+        Zech News is a free, ad-free news reader I build in my spare time.
+        No trackers, no paywalls. If it has been useful, a small tip keeps it
+        brewing.
+      </p>
+    </div>
+    <app-mascot class="donate-mascot"></app-mascot>
+  </section>
+
+  <div class="donate-card">
+
+    <div class="tabs">
+      <button
+        class="tab"
+        [class.active]="tab() === 'world'"
+        (click)="setTab('world')">
+        🌍 International
+      </button>
+      <button
+        class="tab"
+        [class.active]="tab() === 'india'"
+        (click)="setTab('india')">
+        📍 India (UPI)
+      </button>
+    </div>
+
+    <!-- International / GitHub Sponsors -->
+    <div class="panel" *ngIf="tab() === 'world'">
+      <div class="panel-head">
+        <div class="panel-icon">❤️</div>
+        <div>
+          <h2>GitHub Sponsors</h2>
+          <p>
+            The easiest way to support from anywhere in the world. Payments
+            handled securely by GitHub.
+          </p>
+        </div>
+      </div>
+
+      <ul class="feature-list">
+        <li>
+          <span class="f-icon">💳</span>
+          <div>
+            <strong>Accepted payment methods</strong>
+            <span>Credit cards, debit cards, Apple Pay, and Google Pay.</span>
+          </div>
+        </li>
+        <li>
+          <span class="f-icon">🔁</span>
+          <div>
+            <strong>One time or monthly</strong>
+            <span>Send a single tip, or sponsor monthly to keep the project growing.</span>
+          </div>
+        </li>
+        <li>
+          <span class="f-icon">🔒</span>
+          <div>
+            <strong>Safe and private</strong>
+            <span>GitHub handles all payment details. I never see your card info.</span>
+          </div>
+        </li>
+      </ul>
+
+      <a [href]="githubUrl" target="_blank" rel="noopener noreferrer" class="cta-btn">
+        ❤️ Open my GitHub Sponsors page <span class="ext">↗</span>
+      </a>
+    </div>
+
+    <!-- India / UPI -->
+    <div class="panel" *ngIf="tab() === 'india'">
+      <div class="panel-head">
+        <div class="panel-icon">📱</div>
+        <div>
+          <h2>Pay instantly with UPI</h2>
+          <p>
+            Works with Google Pay, PhonePe, Paytm, BHIM, and any UPI-enabled
+            banking app.
+          </p>
+        </div>
+      </div>
+
+      <div class="qr-block">
+        <div class="qr-frame">
+          <img [src]="qrSrc()" alt="UPI QR code" width="240" height="240" />
+          <span class="qr-tag">{{ amount() ? '₹' + amount() : 'Any amount' }}</span>
+        </div>
+        <p class="qr-hint">
+          Open any UPI app, choose <strong>Scan</strong>, and point your camera here.
+        </p>
+      </div>
+
+      <div class="amounts">
+        <div class="amounts-label">Pick a suggested amount</div>
+        <div class="amounts-chips">
+          <button
+            *ngFor="let p of presets"
+            type="button"
+            class="amt-chip"
+            [class.active]="amount() === p"
+            (click)="selectAmount(p)">
+            ₹{{ p }}
+          </button>
+          <button
+            type="button"
+            class="amt-chip"
+            [class.active]="amount() === null"
+            (click)="selectAmount(null)">
+            Enter my own
+          </button>
+        </div>
+        <p class="amt-hint">
+          Selecting an amount fills it automatically inside your payment app on scan.
+        </p>
+      </div>
+
+      <div class="upi-box">
+        <div class="upi-label">Or send directly to this UPI ID</div>
+        <div class="upi-row">
+          <span class="upi-id">{{ upiId }}</span>
+          <button type="button" class="copy-btn" [class.copied]="copied()" (click)="copyUpi()">
+            {{ copied() ? '✓ Copied' : '⧉ Copy' }}
+          </button>
+        </div>
+        <p class="upi-hint">
+          Paste into the “Pay to UPI ID” field if you cannot scan the code.
+        </p>
+      </div>
+
+      <a [href]="upiUri()" class="cta-btn mobile-only">
+        📱 Open my payment app
+      </a>
+    </div>
+
+  </div>
+
+  <div class="thanks">
+    <p class="thanks-main">Thank you for reading this far.</p>
+    <p class="thanks-sub">
+      Every contribution, no matter how small, helps me keep building Zech News.
+    </p>
+  </div>
+
+</div>

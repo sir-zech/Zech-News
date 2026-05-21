@@ -39,6 +39,19 @@
     animation: fadeUp 0.7s ease both;
   }
 
+  .hero-mascot {
+    position: absolute;
+    top: 50%;
+    right: 3rem;
+    transform: translateY(-50%);
+    width: 280px;
+    max-width: 32%;
+    z-index: 1;
+    pointer-events: none;
+    animation: fadeUp 0.9s ease 0.2s both, float 5s ease-in-out 1s infinite;
+    filter: drop-shadow(0 8px 24px rgba(15,23,42,0.18));
+  }
+
   .hero-badge {
     display: inline-flex;
     align-items: center;
@@ -445,8 +458,17 @@
   }
 }
 
+@media (max-width: 1024px) {
+  .hero .hero-mascot {
+    width: 220px;
+    right: 1.5rem;
+    opacity: 0.85;
+  }
+}
+
 @media (max-width: 768px) {
   .hero { padding: 3rem 1.5rem 2.5rem; }
+  .hero .hero-mascot { display: none; }
   .featured { grid-template-columns: 1fr; }
   .featured .featured-img { min-height: 220px; }
   .featured .featured-img .featured-overlay { background: linear-gradient(to top, var(--bg2), transparent); }

@@ -8,11 +8,12 @@ import { LocationService, UserLocation } from '../services/location';
 import { ArticleStateService } from '../services/article-state';
 import { Article, NewsResponse } from '../models/article.model';
 import { NewsCardComponent } from './news-card';
+import { MascotComponent } from './mascot';
 
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [CommonModule, FormsModule, NewsCardComponent],
+  imports: [CommonModule, FormsModule, NewsCardComponent, MascotComponent],
   templateUrl: './home.html',
   styleUrls: ['./home.scss']
 })

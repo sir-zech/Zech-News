@@ -286,6 +286,31 @@
   &:hover { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-glow); }
 }
 
+.coffee-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  background: var(--accent);
+  color: #fff;
+  border: 1px solid var(--accent);
+  border-radius: 10px;
+  padding: 0.42rem 0.8rem;
+  font-size: 0.82rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s;
+  white-space: nowrap;
+  box-shadow: 0 4px 12px var(--accent-glow);
+
+  .coffee-icon { font-size: 1rem; }
+
+  &:hover {
+    background: var(--accent2);
+    transform: translateY(-1px);
+    box-shadow: 0 6px 18px var(--accent-glow);
+  }
+}
+
 .hamburger {
   display: none;
   flex-direction: column;
@@ -389,6 +414,9 @@
   .nav-actions { gap: 0.4rem; }
 
   .loc-btn-nav .loc-nav-label { display: none; }
+
+  .coffee-btn .coffee-label { display: none; }
+  .coffee-btn { padding: 0.42rem 0.6rem; }
 
   .loc-dropdown {
     position: fixed;

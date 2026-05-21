@@ -74,6 +74,10 @@
         🔖
         <span class="bk-badge" *ngIf="bookmarkService.count() > 0">{{ bookmarkService.count() }}</span>
       </a>
+      <a routerLink="/donate" class="coffee-btn" title="Buy me a coffee">
+        <span class="coffee-icon">☕</span>
+        <span class="coffee-label">Tip</span>
+      </a>
       <button class="theme-btn" (click)="toggle()" [title]="dark ? 'Light mode' : 'Dark mode'">
         {{ dark ? '☀️' : '🌙' }}
       </button>
@@ -101,5 +105,9 @@
   <a routerLink="/bookmarks" routerLinkActive="active" class="btm-item">
     <span class="btm-icon">🔖</span>
     <span class="btm-label">Saved</span>
+  </a>
+  <a routerLink="/donate" routerLinkActive="active" class="btm-item">
+    <span class="btm-icon">☕</span>
+    <span class="btm-label">Tip</span>
   </a>
 </nav>
