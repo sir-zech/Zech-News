@@ -8,7 +8,9 @@
       "PowerShell(npx ng build 2>&1 | Select-Object -Last 40)",
       "Bash(npx ng *)",
       "Bash(Find W:\\\\Work Space\\\\Projects\\\\Angular_Projects\\\\news-app *)",
-      "Bash(Find \"W:\\\\Work Space\\\\Projects\\\\Angular_Projects\\\\news-app\" -maxdepth 2 -name \"proxy.conf*\" -o -name \".env*\")"
+      "Bash(Find \"W:\\\\Work Space\\\\Projects\\\\Angular_Projects\\\\news-app\" -maxdepth 2 -name \"proxy.conf*\" -o -name \".env*\")",
+      "PowerShell(npx ng build 2>&1 | Select-Object -Last 10)",
+      "PowerShell(npx ng build 2>&1 | Select-Object -Last 5)"
     ]
   }
 }
