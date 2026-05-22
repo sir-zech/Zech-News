@@ -1,8 +1,26 @@
 <nav class="navbar" [class.scrolled]="scrolled">
   <div class="nav-inner">
-    <a routerLink="/" class="nav-brand">
-      <div class="brand-icon">Z</div>
-      <span>Zech<strong>News</strong></span>
+    <a routerLink="/" class="nav-brand" aria-label="Zech News home">
+      <span class="brand-badge">
+        <svg viewBox="0 0 100 100" class="brand-bear" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <circle cx="26" cy="26" r="13" class="bb-fur" />
+          <circle cx="74" cy="26" r="13" class="bb-fur" />
+          <circle cx="26" cy="26" r="6.5" class="bb-fur-in" />
+          <circle cx="74" cy="26" r="6.5" class="bb-fur-in" />
+          <circle cx="50" cy="52" r="34" class="bb-fur" />
+          <ellipse cx="50" cy="64" rx="17" ry="14" class="bb-fur-in" />
+          <ellipse cx="50" cy="56" rx="4.5" ry="3.5" class="bb-nose" />
+          <path d="M50 60 L50 66" class="bb-mouth" />
+          <path d="M50 66 Q46 71 42 69" class="bb-mouth" />
+          <path d="M50 66 Q54 71 58 69" class="bb-mouth" />
+          <circle cx="36" cy="44" r="9" class="bb-glass" />
+          <circle cx="64" cy="44" r="9" class="bb-glass" />
+          <line x1="45" y1="44" x2="55" y2="44" class="bb-bridge" />
+          <circle cx="36" cy="45" r="2.4" class="bb-eye" />
+          <circle cx="64" cy="45" r="2.4" class="bb-eye" />
+        </svg>
+      </span>
+      <span class="brand-text">Zech<strong>News</strong></span>
     </a>
 
     <div class="nav-links" [class.open]="menuOpen">
@@ -23,20 +41,20 @@
         <span class="bk-count" *ngIf="bookmarkService.count() > 0">{{ bookmarkService.count() }}</span>
       </a>
       <div class="nav-search mobile-search">
-        <input [(ngModel)]="searchQuery" (keyup.enter)="onSearch()" placeholder="Search…" />
-        <button (click)="onSearch()" class="search-btn">🔍</button>
+        <input [(ngModel)]="searchQuery" (keyup.enter)="onSearch()" placeholder="Search news…" />
+        <button (click)="onSearch()" class="search-btn" aria-label="Search">🔍</button>
       </div>
     </div>
 
     <div class="nav-actions">
       <div class="nav-search desktop-search">
         <input [(ngModel)]="searchQuery" (keyup.enter)="onSearch()" placeholder="Search news…" />
-        <button (click)="onSearch()" class="search-btn">🔍</button>
+        <button (click)="onSearch()" class="search-btn" aria-label="Search">🔍</button>
       </div>
 
       <div class="loc-wrap">
-        <button class="loc-btn-nav" (click)="toggleLocationDropdown($event)" title="Location">
-          📍
+        <button class="icon-btn loc-btn-nav" (click)="toggleLocationDropdown($event)" title="Location" aria-label="Location">
+          <span class="ib-glyph">📍</span>
           <span class="loc-nav-label" *ngIf="locationService.location()">
             {{ locationService.location()?.city || locationService.location()?.country || '' }}
           </span>
@@ -70,18 +88,18 @@
         </div>
       </div>
 
-      <a routerLink="/bookmarks" class="bookmark-btn desktop-only" title="Bookmarks">
-        🔖
+      <a routerLink="/bookmarks" class="icon-btn bookmark-btn desktop-only" title="Saved" aria-label="Saved articles">
+        <span class="ib-glyph">🔖</span>
         <span class="bk-badge" *ngIf="bookmarkService.count() > 0">{{ bookmarkService.count() }}</span>
       </a>
       <a routerLink="/donate" class="coffee-btn" title="Buy me a coffee">
         <span class="coffee-icon">☕</span>
         <span class="coffee-label">Tip</span>
       </a>
-      <button class="theme-btn" (click)="toggle()" [title]="dark ? 'Light mode' : 'Dark mode'">
+      <button class="icon-btn theme-btn" (click)="toggle()" [title]="dark ? 'Light mode' : 'Dark mode'" [attr.aria-label]="dark ? 'Switch to light mode' : 'Switch to dark mode'">
         {{ dark ? '☀️' : '🌙' }}
       </button>
-      <button class="hamburger" (click)="toggleMenu()" [class.open]="menuOpen">
+      <button class="hamburger" (click)="toggleMenu()" [class.open]="menuOpen" aria-label="Menu" [attr.aria-expanded]="menuOpen">
         <span></span><span></span><span></span>
       </button>
     </div>
@@ -105,6 +123,7 @@
   <a routerLink="/bookmarks" routerLinkActive="active" class="btm-item">
     <span class="btm-icon">🔖</span>
     <span class="btm-label">Saved</span>
+    <span class="btm-badge" *ngIf="bookmarkService.count() > 0">{{ bookmarkService.count() }}</span>
   </a>
   <a routerLink="/donate" routerLinkActive="active" class="btm-item">
     <span class="btm-icon">☕</span>
