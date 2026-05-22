@@ -65,7 +65,7 @@
         </div>
       </div>
 
-      <a routerLink="/bookmarks" class="icon-btn bookmark-btn desktop-only" title="Saved" aria-label="Saved articles">
+      <a routerLink="/bookmarks" class="icon-btn bookmark-btn" title="Saved" aria-label="Saved articles">
         <span class="ib-glyph">🔖</span>
         <span class="bk-badge" *ngIf="bookmarkService.count() > 0">{{ bookmarkService.count() }}</span>
       </a>

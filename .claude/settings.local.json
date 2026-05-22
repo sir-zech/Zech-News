@@ -16,7 +16,9 @@
       "PowerShell(Test-Path *)",
       "PowerShell(New-Item *)",
       "PowerShell(Get-ChildItem *)",
-      "PowerShell(Get-Process *)"
+      "PowerShell(Get-Process *)",
+      "Bash(curl -s http://localhost:4200/main.js)",
+      "PowerShell(Get-NetTCPConnection *)"
     ]
   }
 }

@@ -27,10 +27,9 @@
   gap: 0;
 }
 
-/* ---------- Second-row category strip (desktop) ---------- */
+/* ---------- Second-row category strip: removed on desktop, becomes the mobile menu ---------- */
 .nav-catbar {
-  border-top: 1px solid var(--border);
-  background: color-mix(in srgb, var(--bg2) 35%, transparent);
+  display: none;
 }
 
 /* ---------- Brand + bear-head logo ---------- */
@@ -610,9 +609,13 @@
   }
 }
 
+/* tiny phones: brand goes logo-only so the top-bar icons (location, saved, theme, menu) all fit */
+@media (max-width: 400px) {
+  .nav-brand .brand-text { display: none; }
+}
+
 @media (max-width: 360px) {
   .nav-inner { gap: 0.3rem; padding: 0 0.5rem; }
-  .nav-brand .brand-text { font-size: 0.95rem; }
   .nav-actions { gap: 0.28rem; }
   .icon-btn { min-width: 38px; padding: 0 0.4rem; }
 }
