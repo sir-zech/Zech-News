@@ -8,6 +8,8 @@
   backdrop-filter: blur(12px);
   transition: background 0.3s, box-shadow 0.3s;
   box-shadow: 0 2px 20px rgba(0,0,0,0.06);
+  padding-left: var(--safe-left);
+  padding-right: var(--safe-right);
 
   &.scrolled { box-shadow: 0 4px 30px rgba(0,0,0,0.12); }
 }
@@ -106,6 +108,7 @@
   transition: all 0.2s;
   display: flex;
   align-items: center;
+  min-height: 40px;
 
   &:hover { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-glow); }
 
@@ -141,21 +144,23 @@
     background: none;
     border: none;
     outline: none;
-    padding: 0.45rem 0.75rem;
+    padding: 0.5rem 0.75rem;
     color: var(--text);
     font-size: 0.85rem;
     width: 180px;
+    min-width: 0;
     &::placeholder { color: var(--text3); }
   }
 
   .search-btn {
     background: none;
     border: none;
-    padding: 0.45rem 0.65rem;
+    padding: 0.5rem 0.65rem;
     cursor: pointer;
     font-size: 0.9rem;
     color: var(--text2);
     transition: color 0.2s;
+    min-height: 40px;
     &:hover { color: var(--accent); }
   }
 }
@@ -178,6 +183,7 @@
   transition: all 0.2s;
   white-space: nowrap;
   max-width: 160px;
+  min-height: 40px;
 
   &:hover { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-glow); }
 
@@ -218,12 +224,12 @@
 .loc-search-wrap {
   .loc-search-input {
     width: 100%;
-    padding: 0.5rem 0.75rem;
+    padding: 0.6rem 0.75rem;
     background: var(--bg3);
     border: 1px solid var(--border);
     border-radius: 8px;
     color: var(--text);
-    font-size: 0.82rem;
+    font-size: 16px;
     outline: none;
     box-sizing: border-box;
     &:focus { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-glow); }
@@ -237,20 +243,22 @@
   display: flex;
   flex-direction: column;
   gap: 2px;
+  -webkit-overflow-scrolling: touch;
 }
 
 .loc-result-item {
   display: block;
   width: 100%;
   text-align: left;
-  padding: 0.45rem 0.6rem;
+  padding: 0.55rem 0.6rem;
   background: none;
   border: none;
   border-radius: 6px;
   color: var(--text);
-  font-size: 0.8rem;
+  font-size: 0.85rem;
   cursor: pointer;
   transition: background 0.15s;
+  min-height: 40px;
   &:hover { background: var(--accent-glow); color: var(--accent); }
 }
 
@@ -263,15 +271,16 @@
 .loc-auto-btn {
   display: block;
   width: 100%;
-  padding: 0.45rem 0.6rem;
+  padding: 0.55rem 0.6rem;
   background: var(--bg3);
   border: 1px solid var(--border);
   border-radius: 8px;
   color: var(--text2);
-  font-size: 0.8rem;
+  font-size: 0.82rem;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.2s;
+  min-height: 40px;
   &:hover { border-color: var(--accent); color: var(--accent); }
 }
 
@@ -283,6 +292,8 @@
   cursor: pointer;
   font-size: 1rem;
   transition: all 0.2s;
+  min-height: 40px;
+  min-width: 40px;
   &:hover { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-glow); }
 }
 
@@ -300,6 +311,7 @@
   cursor: pointer;
   transition: all 0.2s;
   white-space: nowrap;
+  min-height: 40px;
   box-shadow: 0 4px 12px var(--accent-glow);
 
   .coffee-icon { font-size: 1rem; }
@@ -314,11 +326,14 @@
 .hamburger {
   display: none;
   flex-direction: column;
+  justify-content: center;
   gap: 5px;
   background: none;
   border: none;
   cursor: pointer;
   padding: 6px;
+  min-width: 44px;
+  min-height: 44px;
 
   span {
     display: block;
@@ -344,12 +359,16 @@
   background: var(--bg2);
   border-top: 1px solid var(--border);
   padding: 0.4rem 0;
-  padding-bottom: env(safe-area-inset-bottom, 0.4rem);
+  padding-bottom: calc(0.4rem + var(--safe-bottom));
+  padding-left: var(--safe-left);
+  padding-right: var(--safe-right);
+  backdrop-filter: blur(12px);
 
   .btm-item {
     display: flex;
     flex-direction: column;
     align-items: center;
+    justify-content: center;
     gap: 2px;
     flex: 1;
     padding: 0.3rem;
@@ -357,6 +376,7 @@
     font-size: 0.65rem;
     font-weight: 600;
     transition: color 0.2s;
+    min-height: 44px;
 
     .btm-icon { font-size: 1.2rem; }
     .btm-label { letter-spacing: 0.3px; }
@@ -364,10 +384,22 @@
     &.active {
       color: var(--accent);
     }
+
+    &:active {
+      transform: scale(0.94);
+    }
   }
 }
 
 .desktop-only { display: flex; }
+
+/* Tablet (iPad portrait + landscape) */
+@media (max-width: 1024px) {
+  .nav-inner { gap: 1rem; padding: 0 1.25rem; }
+  .nav-search.desktop-search input { width: 140px; }
+  .nav-links .cat-link { padding: 0.4rem 0.55rem; font-size: 0.78rem; }
+  .loc-btn-nav { max-width: 140px; .loc-nav-label { max-width: 70px; } }
+}
 
 @media (max-width: 900px) {
   .nav-inner {
@@ -383,6 +415,7 @@
     flex-direction: column;
     align-items: stretch;
     padding: 1rem;
+    padding-bottom: calc(1rem + var(--safe-bottom));
     gap: 0.25rem;
     border-bottom: 1px solid var(--border);
     box-shadow: 0 8px 30px rgba(0,0,0,0.1);
@@ -394,6 +427,10 @@
                 visibility 0.3s,
                 opacity 0.2s;
     z-index: 99;
+    max-height: calc(100vh - var(--navbar-h));
+    max-height: calc(100dvh - var(--navbar-h));
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
 
     &.open {
       transform: translateY(0);
@@ -402,9 +439,18 @@
       opacity: 1;
     }
 
-    .cat-link { padding: 0.7rem 1rem; font-size: 0.9rem; }
-    .mobile-search { display: flex; margin-top: 0.5rem; width: 100%; }
-    .mobile-search input { flex: 1; width: auto; }
+    .cat-link {
+      padding: 0.85rem 1rem;
+      font-size: 0.95rem;
+      min-height: 44px;
+      border-radius: 10px;
+    }
+    .mobile-search {
+      display: flex;
+      margin-top: 0.5rem;
+      width: 100%;
+      input { flex: 1; width: auto; min-width: 0; font-size: 16px; }
+    }
   }
 
   .desktop-search { display: none; }
@@ -413,10 +459,13 @@
 
   .nav-actions { gap: 0.4rem; }
 
-  .loc-btn-nav .loc-nav-label { display: none; }
+  .loc-btn-nav {
+    max-width: none;
+    .loc-nav-label { display: none; }
+  }
 
   .coffee-btn .coffee-label { display: none; }
-  .coffee-btn { padding: 0.42rem 0.6rem; }
+  .coffee-btn { padding: 0.42rem 0.65rem; min-width: 40px; }
 
   .loc-dropdown {
     position: fixed;
@@ -425,6 +474,8 @@
     width: auto;
     border-radius: 0 0 12px 12px;
     box-shadow: 0 8px 30px rgba(0,0,0,0.15);
+    max-height: calc(100vh - var(--navbar-h) - 80px);
+    overflow-y: auto;
   }
 
   .bottom-nav {
@@ -433,43 +484,57 @@
 }
 
 @media (max-width: 480px) {
-  .navbar { height: 56px; }
+  .navbar { height: 58px; }
+  :root { --navbar-h: 58px; }
 
   .nav-inner {
     padding: 0 0.75rem;
-    gap: 0.5rem;
+    gap: 0.45rem;
   }
 
   .nav-brand {
     gap: 0.4rem;
 
     .brand-icon {
-      width: 30px; height: 30px;
+      width: 32px; height: 32px;
       font-size: 1.1rem;
       border-radius: 7px;
     }
 
-    span { font-size: 1rem; }
+    span { font-size: 1.05rem; }
   }
 
   .nav-actions { gap: 0.3rem; }
 
-  .theme-btn {
-    padding: 0.35rem 0.5rem;
-    font-size: 0.9rem;
-    border-radius: 8px;
+  .theme-btn, .bookmark-btn, .loc-btn-nav, .coffee-btn {
+    padding: 0.4rem 0.55rem;
+    font-size: 0.95rem;
+    border-radius: 9px;
+    min-height: 38px;
   }
 
   .hamburger {
     padding: 4px;
+    min-width: 40px;
+    min-height: 40px;
     span { width: 20px; }
   }
 
-  .nav-links {
-    top: 56px;
-  }
+  .nav-links { top: 58px; }
 
-  .loc-dropdown {
-    top: 56px;
+  .loc-dropdown { top: 58px; }
+
+  .bottom-nav .btm-item {
+    font-size: 0.6rem;
+    .btm-icon { font-size: 1.1rem; }
+  }
+}
+
+@media (max-width: 360px) {
+  .nav-inner { gap: 0.3rem; padding: 0 0.5rem; }
+  .nav-brand span { font-size: 0.95rem; }
+  .nav-actions { gap: 0.25rem; }
+  .theme-btn, .bookmark-btn, .loc-btn-nav, .coffee-btn {
+    padding: 0.35rem 0.45rem;
   }
 }

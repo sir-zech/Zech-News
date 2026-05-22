@@ -70,7 +70,7 @@
 
   h1 {
     font-family: 'Playfair Display', serif;
-    font-size: clamp(2.2rem, 5vw, 3.8rem);
+    font-size: clamp(1.9rem, 5vw, 3.8rem);
     font-weight: 900;
     line-height: 1.15;
     color: var(--text);
@@ -79,7 +79,7 @@
   }
 
   p {
-    font-size: 1.05rem;
+    font-size: clamp(0.95rem, 1.2vw, 1.05rem);
     color: var(--text2);
     margin-bottom: 2rem;
     line-height: 1.7;
@@ -93,7 +93,7 @@
   margin-bottom: 1.5rem;
 
   .ql-chip {
-    padding: 0.45rem 1rem;
+    padding: 0.5rem 1rem;
     border-radius: 100px;
     background: var(--bg3);
     border: 1px solid var(--border);
@@ -102,6 +102,7 @@
     font-weight: 600;
     transition: all 0.2s;
     cursor: pointer;
+    min-height: 36px;
 
     &:hover, &.active {
       background: var(--accent);
@@ -130,7 +131,7 @@
   }
 
   .lang-chip {
-    padding: 0.3rem 0.7rem;
+    padding: 0.4rem 0.8rem;
     border-radius: 100px;
     background: var(--bg3);
     border: 1px solid var(--border);
@@ -139,6 +140,7 @@
     font-weight: 600;
     cursor: pointer;
     transition: all 0.2s;
+    min-height: 32px;
 
     &:hover, &.active {
       background: var(--accent-glow);
@@ -244,7 +246,7 @@
 
     h2 {
       font-family: 'Playfair Display', serif;
-      font-size: 1.6rem;
+      font-size: clamp(1.2rem, 2.4vw, 1.6rem);
       font-weight: 700;
       line-height: 1.35;
       color: var(--text);
@@ -269,6 +271,8 @@
       margin-top: 1.5rem;
       padding-top: 1rem;
       border-top: 1px solid var(--border);
+      gap: 0.5rem;
+      flex-wrap: wrap;
 
       .date { color: var(--text3); font-size: 0.78rem; }
       .read-btn {
@@ -276,6 +280,7 @@
         font-weight: 700;
         font-size: 0.85rem;
         transition: gap 0.2s;
+        white-space: nowrap;
       }
     }
   }
@@ -289,11 +294,13 @@
 }
 
 /* Sections */
-.local-section, .hn-section {
+.local-section, .hn-section, .news-section {
   margin-top: 3rem;
   padding-top: 2rem;
   border-top: 1px solid var(--border);
 }
+
+.news-section { margin-top: 0; padding-top: 0; border-top: none; }
 
 /* Location Search */
 .local-header {
@@ -320,12 +327,13 @@
   background: var(--bg3);
   border: 1px solid var(--border);
   color: var(--text2);
-  padding: 0.4rem 0.9rem;
+  padding: 0.5rem 0.9rem;
   border-radius: 10px;
   font-size: 0.78rem;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.2s;
+  min-height: 36px;
 
   &:hover {
     background: var(--accent-glow);
@@ -353,12 +361,12 @@
 .loc-input {
   width: 100%;
   max-width: 480px;
-  padding: 0.65rem 1rem;
+  padding: 0.7rem 1rem;
   border: 1px solid var(--border);
   border-radius: 12px;
   background: var(--bg2);
   color: var(--text);
-  font-size: 0.88rem;
+  font-size: 16px;
   font-family: inherit;
   outline: none;
   transition: border-color 0.2s, box-shadow 0.2s;
@@ -387,7 +395,7 @@
 .loc-result {
   display: block;
   width: 100%;
-  padding: 0.65rem 1rem;
+  padding: 0.75rem 1rem;
   background: none;
   border: none;
   text-align: left;
@@ -396,6 +404,7 @@
   font-family: inherit;
   cursor: pointer;
   transition: background 0.15s;
+  min-height: 40px;
 
   &:hover {
     background: var(--accent-glow);
@@ -448,36 +457,76 @@
     background: var(--accent);
     color: #fff;
     border: none;
-    padding: 0.65rem 2rem;
+    padding: 0.75rem 2rem;
     border-radius: 10px;
     font-size: 0.9rem;
     font-weight: 600;
     cursor: pointer;
     transition: all 0.2s;
+    min-height: 44px;
     &:hover { background: var(--accent2); transform: translateY(-2px); }
   }
 }
 
+/* Tablet landscape & iPad */
 @media (max-width: 1024px) {
+  .home { padding: 0 1.25rem 3.5rem; }
+  .hero {
+    margin: 0 -1.25rem 2.5rem;
+    padding: 4rem 2rem 3.5rem;
+    border-radius: 0 0 28px 28px;
+  }
   .hero .hero-mascot {
-    width: 220px;
+    width: 200px;
     right: 1.5rem;
     opacity: 0.85;
   }
+  .featured .featured-img { min-height: 280px; }
+  .featured .featured-body { padding: 2rem 1.75rem; }
+  .grid { grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 1.25rem; }
+  .local-section, .hn-section { margin-top: 2.5rem; padding-top: 1.75rem; }
 }
 
+/* Tablet portrait / large phone */
 @media (max-width: 768px) {
-  .hero { padding: 3rem 1.5rem 2.5rem; }
+  .home { padding: 0 1.25rem 3rem; }
+  .hero {
+    margin: 0 -1.25rem 2rem;
+    padding: 3rem 1.5rem 2.5rem;
+    border-radius: 0 0 24px 24px;
+  }
   .hero .hero-mascot { display: none; }
+  .hero h1 { font-size: clamp(1.7rem, 6vw, 2.6rem); }
   .featured { grid-template-columns: 1fr; }
   .featured .featured-img { min-height: 220px; }
   .featured .featured-img .featured-overlay { background: linear-gradient(to top, var(--bg2), transparent); }
   .featured .featured-body { padding: 1.5rem; }
+  .grid { grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 1rem; }
+  .local-section, .hn-section { margin-top: 2.25rem; padding-top: 1.5rem; }
+}
+
+@media (max-width: 600px) {
+  .grid { grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); }
 }
 
 @media (max-width: 480px) {
-  .home { padding: 0 1rem 3rem; }
-  .hero { margin: 0 -1rem 2rem; padding: 2.5rem 1.2rem 2rem; }
-  .hero h1 { font-size: 1.8rem; }
+  .home { padding: 0 1rem 2rem; }
+  .hero { margin: 0 -1rem 1.75rem; padding: 2.25rem 1.1rem 1.75rem; border-radius: 0 0 20px 20px; }
+  .hero .hero-badge { font-size: 0.7rem; padding: 0.25rem 0.85rem; margin-bottom: 0.9rem; }
+  .hero h1 { font-size: 1.65rem; line-height: 1.18; }
+  .hero p { font-size: 0.92rem; margin-bottom: 1.4rem; }
   .grid { grid-template-columns: 1fr; gap: 1rem; }
+  .quick-links { gap: 0.5rem; }
+  .quick-links .ql-chip { padding: 0.4rem 0.85rem; font-size: 0.78rem; }
+  .featured .featured-body { padding: 1.25rem; }
+  .featured .featured-body h2 { font-size: 1.15rem; margin-bottom: 0.7rem; }
+  .featured .featured-img { min-height: 200px; }
+  .section-label { font-size: 0.72rem; letter-spacing: 1.5px; margin-bottom: 0.9rem; }
+  .local-section, .hn-section { margin-top: 1.75rem; padding-top: 1.25rem; }
+}
+
+@media (max-width: 360px) {
+  .home { padding: 0 0.85rem 2rem; }
+  .hero { margin: 0 -0.85rem 1.5rem; padding: 2rem 0.9rem 1.5rem; }
+  .hero h1 { font-size: 1.5rem; }
 }
