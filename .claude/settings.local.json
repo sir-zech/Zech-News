@@ -14,7 +14,9 @@
       "PowerShell(npm run *)",
       "Bash(npm start *)",
       "PowerShell(Test-Path *)",
-      "PowerShell(New-Item *)"
+      "PowerShell(New-Item *)",
+      "PowerShell(Get-ChildItem *)",
+      "PowerShell(Get-Process *)"
     ]
   }
 }

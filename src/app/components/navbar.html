@@ -23,29 +23,6 @@
       <span class="brand-text">Zech<strong>News</strong></span>
     </a>
 
-    <div class="nav-links" [class.open]="menuOpen">
-      <a *ngFor="let cat of categories"
-         [routerLink]="['/category', cat.value]"
-         routerLinkActive="active"
-         class="cat-link"
-         (click)="menuOpen=false">
-        <span class="cat-icon">{{ cat.icon }}</span>
-        {{ cat.label }}
-      </a>
-      <a routerLink="/bookmarks"
-         routerLinkActive="active"
-         class="cat-link bookmark-link"
-         (click)="menuOpen=false">
-        <span class="cat-icon">🔖</span>
-        Saved
-        <span class="bk-count" *ngIf="bookmarkService.count() > 0">{{ bookmarkService.count() }}</span>
-      </a>
-      <div class="nav-search mobile-search">
-        <input [(ngModel)]="searchQuery" (keyup.enter)="onSearch()" placeholder="Search news…" />
-        <button (click)="onSearch()" class="search-btn" aria-label="Search">🔍</button>
-      </div>
-    </div>
-
     <div class="nav-actions">
       <div class="nav-search desktop-search">
         <input [(ngModel)]="searchQuery" (keyup.enter)="onSearch()" placeholder="Search news…" />
@@ -102,6 +79,31 @@
       <button class="hamburger" (click)="toggleMenu()" [class.open]="menuOpen" aria-label="Menu" [attr.aria-expanded]="menuOpen">
         <span></span><span></span><span></span>
       </button>
+    </div>
+  </div>
+
+  <div class="nav-catbar">
+    <div class="nav-links" [class.open]="menuOpen">
+      <a *ngFor="let cat of categories"
+         [routerLink]="['/category', cat.value]"
+         routerLinkActive="active"
+         class="cat-link"
+         (click)="menuOpen=false">
+        <span class="cat-icon">{{ cat.icon }}</span>
+        {{ cat.label }}
+      </a>
+      <a routerLink="/bookmarks"
+         routerLinkActive="active"
+         class="cat-link bookmark-link"
+         (click)="menuOpen=false">
+        <span class="cat-icon">🔖</span>
+        Saved
+        <span class="bk-count" *ngIf="bookmarkService.count() > 0">{{ bookmarkService.count() }}</span>
+      </a>
+      <div class="nav-search mobile-search">
+        <input [(ngModel)]="searchQuery" (keyup.enter)="onSearch()" placeholder="Search news…" />
+        <button (click)="onSearch()" class="search-btn" aria-label="Search">🔍</button>
+      </div>
     </div>
   </div>
 </nav>
