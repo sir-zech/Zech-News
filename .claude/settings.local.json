@@ -20,7 +20,8 @@
       "Bash(curl -s http://localhost:4200/main.js)",
       "PowerShell(Get-NetTCPConnection *)",
       "PowerShell(npx ng add @angular/pwa@21 --skip-confirmation --defaults)",
-      "PowerShell(npm install *)"
+      "PowerShell(npm install *)",
+      "Bash(npm ls *)"
     ]
   }
 }
