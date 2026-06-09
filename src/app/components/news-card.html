@@ -1,5 +1,5 @@
 <!-- Compact list row (secondary sections) -->
-<div class="row" *ngIf="compact" (click)="openArticle($event)">
+<div class="row" *ngIf="compact" [class.read]="isReadArticle" (click)="openArticle($event)">
   <div class="row-body">
     <div class="row-source">
       <img
@@ -31,7 +31,7 @@
 </div>
 
 <!-- Full rich card -->
-<div class="card" *ngIf="!compact" (click)="openArticle($event)">
+<div class="card" *ngIf="!compact" [class.read]="isReadArticle" (click)="openArticle($event)">
   <!-- Image present -->
   <div class="card-img" *ngIf="hasImage">
     <img

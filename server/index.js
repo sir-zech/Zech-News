@@ -74,9 +74,13 @@ app.get('/api/extract', async (req, res) => {
     const { url } = req.query;
     if (!url) return res.status(400).json({ error: 'URL required' });
     cache(res, 3600, 7200);
-    res.json(await extractArticle(url));
+    // Render has no request timeout — give extraction room to try every engine.
+    res.json(await extractArticle(url, { budgetMs: 45000 }));
   } catch (e) {
-    res.status(500).json({ error: 'Extraction failed', details: e.message });
+    res.status(200).json({
+      title: '', description: '', image: '', content: 'Could not extract article content.',
+      paragraphs: [], images: [], byline: '', wordCount: 0, extracted: false,
+    });
   }
 });
 

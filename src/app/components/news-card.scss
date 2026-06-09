@@ -291,6 +291,17 @@
   .row h4 { font-size: 0.88rem; -webkit-line-clamp: 3; }
 }
 
+/* ---- Read state (Feeder-style dimming of already-opened stories) ---- */
+.card.read {
+  .card-body h3 { color: var(--text2); font-weight: 600; }
+  .card-img img { opacity: 0.82; }
+}
+
+.row.read {
+  h4 { color: var(--text3); font-weight: 600; }
+  .row-thumb img { opacity: 0.78; }
+}
+
 @media (hover: none) {
   .card .card-img .card-actions {
     opacity: 1;

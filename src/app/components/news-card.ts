@@ -4,6 +4,8 @@ import { Router } from '@angular/router';
 import { Article } from '../models/article.model';
 import { BookmarkService } from '../services/bookmark';
 import { ArticleStateService } from '../services/article-state';
+import { ReadStateService } from '../services/read-state';
+import { SettingsService } from '../services/settings';
 import { TimeAgoPipe } from '../pipes/time-ago.pipe';
 import { ImgProxyPipe, FaviconPipe } from '../pipes/img-proxy.pipe';
 
@@ -24,11 +26,17 @@ export class NewsCardComponent {
   constructor(
     private bookmarkService: BookmarkService,
     private articleState: ArticleStateService,
-    private router: Router
+    private router: Router,
+    public readState: ReadStateService,
+    public settings: SettingsService
   ) {}
 
   get hasImage(): boolean {
-    return !!this.article.image && !this.imgError;
+    return !!this.article.image && !this.imgError && this.settings.showImages();
+  }
+
+  get isReadArticle(): boolean {
+    return this.readState.isRead(this.article.url);
   }
 
   get domainInitial(): string {
@@ -50,6 +58,7 @@ export class NewsCardComponent {
 
   openArticle(e: Event) {
     e.stopPropagation();
+    this.readState.markRead(this.article.url);
     this.articleState.set(this.article);
     this.router.navigate(['/article']);
   }

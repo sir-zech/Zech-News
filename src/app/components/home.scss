@@ -86,34 +86,6 @@
   }
 }
 
-.quick-links {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.6rem;
-  margin-bottom: 1.5rem;
-
-  .ql-chip {
-    padding: 0.5rem 1rem;
-    border-radius: 100px;
-    background: var(--bg3);
-    border: 1px solid var(--border);
-    color: var(--text2);
-    font-size: 0.82rem;
-    font-weight: 600;
-    transition: all 0.2s;
-    cursor: pointer;
-    min-height: 36px;
-
-    &:hover, &.active {
-      background: var(--accent);
-      color: #fff;
-      border-color: var(--accent);
-      transform: translateY(-2px);
-      box-shadow: 0 4px 14px var(--accent-glow);
-    }
-  }
-}
-
 /* Language Selector */
 .lang-bar {
   .lang-label {
@@ -294,136 +266,7 @@
 }
 
 /* Sections */
-.local-section, .hn-section, .news-section {
-  margin-top: 3rem;
-  padding-top: 2rem;
-  border-top: 1px solid var(--border);
-}
-
-.news-section { margin-top: 0; padding-top: 0; border-top: none; }
-
-/* Location Search */
-.local-header {
-  margin-bottom: 1.5rem;
-}
-
-.local-title-row {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  flex-wrap: wrap;
-  gap: 0.8rem;
-  margin-bottom: 0.5rem;
-
-  .section-label { margin-bottom: 0; }
-}
-
-.local-actions {
-  display: flex;
-  gap: 0.5rem;
-}
-
-.loc-btn {
-  background: var(--bg3);
-  border: 1px solid var(--border);
-  color: var(--text2);
-  padding: 0.5rem 0.9rem;
-  border-radius: 10px;
-  font-size: 0.78rem;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.2s;
-  min-height: 36px;
-
-  &:hover {
-    background: var(--accent-glow);
-    color: var(--accent);
-    border-color: var(--accent);
-  }
-}
-
-.loc-btn-auto {
-  background: none;
-  border-color: transparent;
-  color: var(--text3);
-  &:hover { background: var(--bg3); border-color: var(--border); color: var(--text2); }
-}
-
-.location-search {
-  margin-top: 0.8rem;
-  animation: fadeUp 0.3s ease both;
-}
-
-.loc-input-wrap {
-  position: relative;
-}
-
-.loc-input {
-  width: 100%;
-  max-width: 480px;
-  padding: 0.7rem 1rem;
-  border: 1px solid var(--border);
-  border-radius: 12px;
-  background: var(--bg2);
-  color: var(--text);
-  font-size: 16px;
-  font-family: inherit;
-  outline: none;
-  transition: border-color 0.2s, box-shadow 0.2s;
-
-  &::placeholder { color: var(--text3); }
-
-  &:focus {
-    border-color: var(--accent);
-    box-shadow: 0 0 0 3px var(--accent-glow);
-  }
-}
-
-.loc-results {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-  margin-top: 0.4rem;
-  max-width: 480px;
-  background: var(--bg2);
-  border: 1px solid var(--border);
-  border-radius: 12px;
-  overflow: hidden;
-  box-shadow: 0 8px 24px rgba(0,0,0,0.1);
-}
-
-.loc-result {
-  display: block;
-  width: 100%;
-  padding: 0.75rem 1rem;
-  background: none;
-  border: none;
-  text-align: left;
-  color: var(--text);
-  font-size: 0.85rem;
-  font-family: inherit;
-  cursor: pointer;
-  transition: background 0.15s;
-  min-height: 40px;
-
-  &:hover {
-    background: var(--accent-glow);
-    color: var(--accent);
-  }
-}
-
-.loc-no-results {
-  margin-top: 0.4rem;
-  font-size: 0.82rem;
-  color: var(--text3);
-}
-
-.local-empty {
-  text-align: center;
-  padding: 2rem;
-  color: var(--text3);
-  font-size: 0.88rem;
-}
+.news-section { margin-top: 2.25rem; }
 
 /* Skeleton */
 .skeleton-wrap {
@@ -484,7 +327,6 @@
   .featured .featured-img { min-height: 280px; }
   .featured .featured-body { padding: 2rem 1.75rem; }
   .grid { grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 1.25rem; }
-  .local-section, .hn-section { margin-top: 2.5rem; padding-top: 1.75rem; }
 }
 
 /* Tablet portrait / large phone */
@@ -502,7 +344,6 @@
   .featured .featured-img .featured-overlay { background: linear-gradient(to top, var(--bg2), transparent); }
   .featured .featured-body { padding: 1.5rem; }
   .grid { grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 1rem; }
-  .local-section, .hn-section { margin-top: 2.25rem; padding-top: 1.5rem; }
 }
 
 @media (max-width: 600px) {
@@ -516,13 +357,10 @@
   .hero h1 { font-size: 1.65rem; line-height: 1.18; }
   .hero p { font-size: 0.92rem; margin-bottom: 1.4rem; }
   .grid { grid-template-columns: 1fr; gap: 1rem; }
-  .quick-links { gap: 0.5rem; }
-  .quick-links .ql-chip { padding: 0.4rem 0.85rem; font-size: 0.78rem; }
   .featured .featured-body { padding: 1.25rem; }
   .featured .featured-body h2 { font-size: 1.15rem; margin-bottom: 0.7rem; }
   .featured .featured-img { min-height: 200px; }
   .section-label { font-size: 0.72rem; letter-spacing: 1.5px; margin-bottom: 0.9rem; }
-  .local-section, .hn-section { margin-top: 1.75rem; padding-top: 1.25rem; }
 }
 
 @media (max-width: 360px) {
@@ -607,4 +445,84 @@
 .scroll-anchor {
   width: 100%;
   height: 1px;
+}
+
+/* ---- Pull-to-refresh ---- */
+.ptr {
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  overflow: hidden;
+  height: 0;
+  transition: height 0.18s ease;
+
+  .ptr-icon {
+    font-size: 1.4rem;
+    color: var(--accent);
+    padding-bottom: 8px;
+    display: inline-block;
+  }
+  &.refreshing .ptr-icon,
+  .ptr-icon.spin {
+    animation: spin 0.8s linear infinite;
+  }
+}
+
+/* ---- Section head + view options (Feeder-style list options) ---- */
+.section-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin-bottom: 1.2rem;
+
+  .section-label { margin-bottom: 0; }
+}
+
+.view-options {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  flex-shrink: 0;
+
+  .seg {
+    display: inline-flex;
+    border: 1px solid var(--border);
+    border-radius: 9px;
+    overflow: hidden;
+
+    button {
+      background: var(--bg2);
+      border: none;
+      color: var(--text3);
+      padding: 0.35rem 0.6rem;
+      font-size: 0.95rem;
+      min-height: 34px;
+      cursor: pointer;
+      transition: background 0.18s, color 0.18s;
+
+      &.active { background: var(--accent); color: #fff; }
+    }
+  }
+
+  .vo-btn {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 9px;
+    color: var(--text2);
+    padding: 0.35rem 0.55rem;
+    font-size: 0.9rem;
+    min-height: 34px;
+    min-width: 34px;
+    cursor: pointer;
+    transition: border-color 0.18s;
+
+    &:hover { border-color: var(--accent); }
+  }
+}
+
+/* ---- Featured read state ---- */
+.featured.read {
+  .featured-body h2 { color: var(--text2); }
+  .featured-img img { opacity: 0.85; }
 }

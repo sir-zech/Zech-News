@@ -1,4 +1,9 @@
-<div class="home">
+<div class="home" (touchstart)="onTouchStart($event)" (touchmove)="onTouchMove($event)" (touchend)="onTouchEnd()">
+
+  <!-- Pull-to-refresh indicator (mobile) -->
+  <div class="ptr" [style.height.px]="refreshing ? 46 : pullY" [class.refreshing]="refreshing">
+    <span class="ptr-icon" [class.spin]="refreshing" [style.opacity]="refreshing ? 1 : (pullY / 55)">⟳</span>
+  </div>
 
   <!-- Hero Banner -->
   <section class="hero">
@@ -65,7 +70,7 @@
   <section class="featured-wrap" *ngIf="featured && !loading">
     <div class="section-label">✦ Featured Story</div>
 
-    <div class="featured" (click)="openArticle(featured)">
+    <div class="featured" [class.read]="isRead(featured)" (click)="openArticle(featured)">
       <div class="featured-img">
         <img
           [src]="(featured.image | imgproxy:900) || 'https://placehold.co/800x420/2563eb/fff?text=Zech+News'"
@@ -147,11 +152,24 @@
 
   <!-- Latest — endless river -->
   <section class="news-section" *ngIf="!loading && !error && (feedArticles.length > 0 || featured)">
-    <div class="section-label">✦ Latest News</div>
-    <div class="grid">
+    <div class="section-head">
+      <div class="section-label">✦ Latest News</div>
+      <div class="view-options">
+        <div class="seg">
+          <button [class.active]="settings.density() === 'card'" (click)="settings.setDensity('card')" title="Card view" aria-label="Card view">▦</button>
+          <button [class.active]="settings.density() === 'compact'" (click)="settings.setDensity('compact')" title="List view" aria-label="List view">☰</button>
+        </div>
+        <button class="vo-btn" (click)="settings.toggleImages()" [title]="settings.showImages() ? 'Hide images' : 'Show images'">
+          {{ settings.showImages() ? '🖼️' : '🚫' }}
+        </button>
+        <button class="vo-btn" (click)="markAllRead()" title="Mark all read">✓</button>
+      </div>
+    </div>
+    <div [ngClass]="settings.density() === 'compact' ? 'row-list' : 'grid'">
       <app-news-card
         *ngFor="let article of feedArticles; let i = index"
         [article]="article"
+        [compact]="settings.density() === 'compact'"
         [style.animation-delay]="(i % 12) * 50 + 'ms'">
       </app-news-card>
     </div>

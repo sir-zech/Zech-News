@@ -14,6 +14,8 @@ import { NewsService } from '../services/news';
 import { SmartService } from '../services/smart';
 import { LocationService, UserLocation } from '../services/location';
 import { ArticleStateService } from '../services/article-state';
+import { ReadStateService } from '../services/read-state';
+import { SettingsService } from '../services/settings';
 import { Article } from '../models/article.model';
 import { NewsCardComponent } from './news-card';
 import { MascotComponent } from './mascot';
@@ -92,11 +94,19 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
     { label: '🎬 Culture', value: 'entertainment' },
   ];
 
+  // Pull-to-refresh (mobile)
+  pullY = 0;
+  refreshing = false;
+  private pullStartY = 0;
+  private pulling = false;
+
   constructor(
     private newsService: NewsService,
     private smartService: SmartService,
     public locationService: LocationService,
     private articleState: ArticleStateService,
+    public readState: ReadStateService,
+    public settings: SettingsService,
     private router: Router
   ) {
     const savedLang = localStorage.getItem('zech-lang');
@@ -104,7 +114,9 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
 
     effect(() => {
       const loc = this.locationService.location();
-      if (loc) this.loadLocalNewsFor(loc);
+      // Defer: getLocalNews may emit synchronously on a cache hit, and mutating
+      // state inside an effect during change-detection triggers NG0100.
+      if (loc) setTimeout(() => this.loadLocalNewsFor(loc));
     });
   }
 
@@ -121,7 +133,16 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
   ngAfterViewInit() {
     this.observer = new IntersectionObserver(
       (entries) => {
-        if (entries[0]?.isIntersecting) this.loadFeed(false);
+        // Defer to a fresh task so we never mutate state mid change-detection
+        // (avoids NG0100) and never tight-loop the observer.
+        if (
+          entries[0]?.isIntersecting &&
+          !this.loadingMore &&
+          !this.loading &&
+          this.hasMore
+        ) {
+          setTimeout(() => this.loadFeed(false));
+        }
       },
       { rootMargin: '600px 0px' }
     );
@@ -133,8 +154,46 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   openArticle(article: Article) {
+    this.readState.markRead(article.url);
     this.articleState.set(article);
     this.router.navigate(['/article']);
+  }
+
+  isRead(article: Article): boolean {
+    return this.readState.isRead(article.url);
+  }
+
+  markAllRead() {
+    const urls = [this.featured?.url, ...this.feedArticles.map((a) => a.url)];
+    this.readState.markAllRead(urls);
+  }
+
+  // ---- Pull-to-refresh (mobile) ----
+  onTouchStart(e: TouchEvent) {
+    if (window.scrollY <= 0 && !this.refreshing) {
+      this.pullStartY = e.touches[0].clientY;
+      this.pulling = true;
+    }
+  }
+
+  onTouchMove(e: TouchEvent) {
+    if (!this.pulling || this.refreshing) return;
+    const dy = e.touches[0].clientY - this.pullStartY;
+    this.pullY = dy > 0 ? Math.min(90, dy * 0.5) : 0;
+  }
+
+  onTouchEnd() {
+    if (this.pulling && this.pullY > 55 && !this.refreshing) {
+      this.refreshing = true;
+      this.newsService.clearCache();
+      this.loadFeed(true);
+      this.loadHackerNews();
+      this.loadDevToNews();
+      this.loadSpaceNews();
+      this.loadRedditNews();
+    }
+    this.pulling = false;
+    this.pullY = 0;
   }
 
   loadFeed(reset: boolean) {
@@ -176,10 +235,12 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
         this.page++;
         this.loading = false;
         this.loadingMore = false;
+        this.refreshing = false;
       },
       error: (err) => {
         this.loading = false;
         this.loadingMore = false;
+        this.refreshing = false;
         if (reset) {
           this.error =
             err?.status === 429
