@@ -9,27 +9,40 @@
     </div>
   </div>
 
-  <!-- Skeleton -->
+  <!-- Initial skeleton -->
   <div class="grid" *ngIf="loading">
     <div class="skeleton sk-card" *ngFor="let i of [1,2,3,4,5,6]"></div>
   </div>
 
-  <div class="error-state" *ngIf="error">
+  <div class="error-state" *ngIf="error && !loading">
     <div class="error-icon">⚠️</div>
     <p>{{ error }}</p>
-    <button (click)="loadNews()" class="retry-btn">Try Again</button>
+    <button (click)="retry()" class="retry-btn">Try Again</button>
   </div>
 
-  <div class="grid" *ngIf="!loading && !error">
+  <!-- Results (infinite) -->
+  <div class="grid" *ngIf="!loading && !error && articles.length > 0">
     <app-news-card
       *ngFor="let article of articles; let i = index"
       [article]="article"
-      [style.animation-delay]="i * 60 + 'ms'">
+      [style.animation-delay]="(i % 12) * 50 + 'ms'">
     </app-news-card>
+  </div>
+
+  <!-- Appending skeleton -->
+  <div class="grid more-skeleton" *ngIf="loadingMore">
+    <div class="skeleton sk-card" *ngFor="let i of [1,2,3]"></div>
+  </div>
+
+  <div class="feed-end" *ngIf="!loading && !loadingMore && !hasMore && articles.length > 0">
+    ✓ You're all caught up
   </div>
 
   <div class="empty" *ngIf="!loading && !error && articles.length === 0">
     <div class="empty-icon">🔍</div>
-    <p>No articles found.</p>
+    <p>No articles found{{ isSearch && searchQuery ? ' for "' + searchQuery + '"' : '' }}.</p>
   </div>
+
+  <!-- Infinite-scroll sentinel -->
+  <div #scrollAnchor class="scroll-anchor" aria-hidden="true"></div>
 </div>

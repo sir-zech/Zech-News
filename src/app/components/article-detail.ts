@@ -25,6 +25,7 @@ export class ArticleDetailComponent implements OnInit, OnDestroy {
 
   fullContent: string[] = [];
   extractedImages: string[] = [];
+  readerHtml = ''; // sanitized rich article HTML (ad-free), rendered via [innerHTML]
   byline = '';
   extracting = false;
   extractError = '';
@@ -83,6 +84,7 @@ export class ArticleDetailComponent implements OnInit, OnDestroy {
           this.fullWordCount = data.wordCount;
           this.extractedImages = (data.images || []).filter(Boolean);
           this.byline = data.byline || '';
+          this.readerHtml = data.html || '';
           this.extracted = true;
           if (data.image && !this.article!.image) this.article!.image = data.image;
         }

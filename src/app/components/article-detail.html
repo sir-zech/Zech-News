@@ -80,7 +80,12 @@
           <span>Full Article — Ad-Free</span>
           <span class="word-count">{{ fullWordCount }} words</span>
         </div>
-        <div class="full-article-body" [style.font-size.rem]="bodyFontRem">
+        <div
+          class="full-article-body reader-html"
+          *ngIf="readerHtml"
+          [style.font-size.rem]="bodyFontRem"
+          [innerHTML]="readerHtml"></div>
+        <div class="full-article-body" *ngIf="!readerHtml" [style.font-size.rem]="bodyFontRem">
           <p *ngFor="let para of fullContent">{{ para }}</p>
         </div>
       </div>

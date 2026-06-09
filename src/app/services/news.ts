@@ -9,6 +9,7 @@ export interface ExtractedArticle {
   description: string;
   image: string;
   content: string;
+  html?: string;
   paragraphs: string[];
   images?: string[];
   byline?: string;
@@ -63,11 +64,10 @@ export class NewsService {
       .subscribe();
   }
 
-  getFeed(category = 'general', lang = 'en', page = 1, country?: string): Observable<FeedResponse> {
-    let params = new HttpParams()
-      .set('category', category)
-      .set('lang', lang)
-      .set('page', String(page));
+  getFeed(category = 'general', lang = 'en', page = 1, q?: string, country?: string): Observable<FeedResponse> {
+    let params = new HttpParams().set('lang', lang).set('page', String(page));
+    if (q && q.trim()) params = params.set('q', q.trim());
+    else params = params.set('category', category);
     if (country) params = params.set('country', country);
     const empty: FeedResponse = { totalArticles: 0, articles: [], page, pageSize: 0, hasMore: false };
     return this.req<FeedResponse>('/api/feed', params, empty);
