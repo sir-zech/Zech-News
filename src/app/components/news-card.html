@@ -1,10 +1,46 @@
-<div class="card" (click)="openArticle($event)">
+<!-- Compact list row (secondary sections) -->
+<div class="row" *ngIf="compact" (click)="openArticle($event)">
+  <div class="row-body">
+    <div class="row-source">
+      <img
+        *ngIf="!faviconError"
+        class="favicon"
+        [src]="article.url | favicon:64"
+        alt=""
+        loading="lazy"
+        (error)="onFaviconError()" />
+      <span class="src-name">{{ article.source.name }}</span>
+      <span class="dot">·</span>
+      <span class="time">{{ article.publishedAt | timeAgo }}</span>
+    </div>
+    <h4>{{ article.title }}</h4>
+  </div>
+  <div class="row-thumb" *ngIf="hasImage">
+    <img
+      [src]="article.image | imgproxy:240"
+      [alt]="article.title"
+      loading="lazy"
+      decoding="async"
+      width="96"
+      height="96"
+      (error)="onImgError()" />
+  </div>
+  <button class="row-save" (click)="toggleBookmark($event)" [attr.aria-label]="isBookmarked() ? 'Remove' : 'Save'">
+    {{ isBookmarked() ? '🔖' : '🏷️' }}
+  </button>
+</div>
+
+<!-- Full rich card -->
+<div class="card" *ngIf="!compact" (click)="openArticle($event)">
   <!-- Image present -->
   <div class="card-img" *ngIf="hasImage">
     <img
-      [src]="article.image"
+      [src]="article.image | imgproxy:600"
       [alt]="article.title"
       loading="lazy"
+      decoding="async"
+      width="600"
+      height="340"
       (error)="onImgError()" />
     <div class="card-img-overlay"></div>
     <span class="source-badge">{{ article.source.name }}</span>
@@ -32,16 +68,23 @@
   </div>
 
   <div class="card-body">
-    <div class="card-smart" *ngIf="article.readingTime">
-      <span class="reading-time">⏱️ {{ article.readingTime }}m</span>
+    <div class="card-smart">
+      <img
+        *ngIf="!faviconError"
+        class="favicon"
+        [src]="article.url | favicon:64"
+        alt=""
+        loading="lazy"
+        (error)="onFaviconError()" />
+      <span class="reading-time" *ngIf="article.readingTime">⏱️ {{ article.readingTime }}m</span>
       <span class="sentiment" *ngIf="article.sentiment">{{ sentimentIcon }}</span>
-      <span class="api-src" *ngIf="article.apiSource && article.apiSource !== 'gnews'">{{ article.apiSource }}</span>
+      <span class="time">{{ article.publishedAt | timeAgo }}</span>
     </div>
     <h3>{{ article.title }}</h3>
     <p>{{ article.description }}</p>
     <div class="card-footer">
-      <span class="date">📅 {{ article.publishedAt | date:'MMM d, y' }}</span>
-      <span class="read-more">Read Summary →</span>
+      <span class="src">{{ article.source.name }}</span>
+      <span class="read-more">Read →</span>
     </div>
   </div>
 </div>

@@ -1,0 +1,13 @@
+{
+  "name": "zech-news-server",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Render Express backend for Zech News. Runtime deps live in the root package.json (Render root dir = repo root, start: node server/index.js).",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}

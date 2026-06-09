@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, HostListener } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { ArticleStateService } from '../services/article-state';
@@ -7,13 +7,14 @@ import { TtsService } from '../services/tts';
 import { SmartService } from '../services/smart';
 import { NewsService, ExtractedArticle } from '../services/news';
 import { Article } from '../models/article.model';
+import { ImgProxyPipe, FaviconPipe } from '../pipes/img-proxy.pipe';
 
 @Component({
   selector: 'app-article-detail',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, ImgProxyPipe, FaviconPipe],
   templateUrl: './article-detail.html',
-  styleUrls: ['./article-detail.scss']
+  styleUrls: ['./article-detail.scss'],
 })
 export class ArticleDetailComponent implements OnInit, OnDestroy {
   article: Article | null = null;
@@ -23,10 +24,15 @@ export class ArticleDetailComponent implements OnInit, OnDestroy {
   shareSupported = typeof navigator !== 'undefined' && !!navigator.share;
 
   fullContent: string[] = [];
+  extractedImages: string[] = [];
+  byline = '';
   extracting = false;
   extractError = '';
   extracted = false;
   fullWordCount = 0;
+
+  readingProgress = 0;
+  fontScale = 1; // 0.85 – 1.4
 
   constructor(
     private articleState: ArticleStateService,
@@ -43,14 +49,25 @@ export class ArticleDetailComponent implements OnInit, OnDestroy {
       this.router.navigate(['/']);
       return;
     }
+    const savedFont = parseFloat(localStorage.getItem('zech-font') || '1');
+    if (!isNaN(savedFont)) this.fontScale = Math.min(1.4, Math.max(0.85, savedFont));
+
     this.article = this.smartService.enrichArticle(this.article);
     this.summaryPoints = this.smartService.generateSummaryPoints(this.article);
     this.isBookmarked = this.bookmarkService.isBookmarked(this.article.url);
+    window.scrollTo({ top: 0 });
     this.loadFullArticle();
   }
 
   ngOnDestroy() {
     this.ttsService.stop();
+  }
+
+  @HostListener('window:scroll')
+  onScroll() {
+    const el = document.documentElement;
+    const max = el.scrollHeight - el.clientHeight;
+    this.readingProgress = max > 0 ? Math.min(100, Math.round((el.scrollTop / max) * 100)) : 0;
   }
 
   loadFullArticle() {
@@ -64,17 +81,31 @@ export class ArticleDetailComponent implements OnInit, OnDestroy {
         if (data.extracted && data.paragraphs.length > 0) {
           this.fullContent = data.paragraphs;
           this.fullWordCount = data.wordCount;
+          this.extractedImages = (data.images || []).filter(Boolean);
+          this.byline = data.byline || '';
           this.extracted = true;
-          if (data.image && !this.article!.image) {
-            this.article!.image = data.image;
-          }
+          if (data.image && !this.article!.image) this.article!.image = data.image;
         }
       },
       error: () => {
         this.extracting = false;
         this.extractError = 'Could not load full article.';
-      }
+      },
     });
+  }
+
+  get bodyFontRem(): number {
+    return +(1.05 * this.fontScale).toFixed(3);
+  }
+
+  incFont() {
+    this.fontScale = Math.min(1.4, +(this.fontScale + 0.1).toFixed(2));
+    localStorage.setItem('zech-font', String(this.fontScale));
+  }
+
+  decFont() {
+    this.fontScale = Math.max(0.85, +(this.fontScale - 0.1).toFixed(2));
+    localStorage.setItem('zech-font', String(this.fontScale));
   }
 
   toggleBookmark() {
@@ -89,7 +120,8 @@ export class ArticleDetailComponent implements OnInit, OnDestroy {
       text = [this.article.title, ...this.fullContent].join('. ');
     } else {
       text = [this.article.title, this.article.description, this.article.content]
-        .filter(Boolean).join('. ');
+        .filter(Boolean)
+        .join('. ');
     }
     this.ttsService.toggle(text);
   }
@@ -100,7 +132,7 @@ export class ArticleDetailComponent implements OnInit, OnDestroy {
       await navigator.share({
         title: this.article.title,
         text: this.article.description,
-        url: this.article.url
+        url: this.article.url,
       });
     } catch {}
   }
@@ -125,9 +157,12 @@ export class ArticleDetailComponent implements OnInit, OnDestroy {
 
   getSentimentIcon(): string {
     switch (this.article?.sentiment) {
-      case 'positive': return '😊';
-      case 'negative': return '😟';
-      default: return '😐';
+      case 'positive':
+        return '😊';
+      case 'negative':
+        return '😟';
+      default:
+        return '😐';
     }
   }
 
@@ -136,9 +171,7 @@ export class ArticleDetailComponent implements OnInit, OnDestroy {
   }
 
   get readingTimeFull(): number {
-    if (this.fullWordCount > 0) {
-      return Math.max(1, Math.ceil(this.fullWordCount / 200));
-    }
+    if (this.fullWordCount > 0) return Math.max(1, Math.ceil(this.fullWordCount / 200));
     return this.article?.readingTime || 1;
   }
 }

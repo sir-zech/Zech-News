@@ -4,17 +4,22 @@ import { Router } from '@angular/router';
 import { Article } from '../models/article.model';
 import { BookmarkService } from '../services/bookmark';
 import { ArticleStateService } from '../services/article-state';
+import { TimeAgoPipe } from '../pipes/time-ago.pipe';
+import { ImgProxyPipe, FaviconPipe } from '../pipes/img-proxy.pipe';
 
 @Component({
   selector: 'app-news-card',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, TimeAgoPipe, ImgProxyPipe, FaviconPipe],
   templateUrl: './news-card.html',
-  styleUrls: ['./news-card.scss']
+  styleUrls: ['./news-card.scss'],
 })
 export class NewsCardComponent {
   @Input() article!: Article;
+  /** Compact thumbnail-left list row (used by secondary feed sections). */
+  @Input() compact = false;
   imgError = false;
+  faviconError = false;
 
   constructor(
     private bookmarkService: BookmarkService,
@@ -23,7 +28,7 @@ export class NewsCardComponent {
   ) {}
 
   get hasImage(): boolean {
-    return !!(this.article.image) && !this.imgError;
+    return !!this.article.image && !this.imgError;
   }
 
   get domainInitial(): string {
@@ -65,7 +70,7 @@ export class NewsCardComponent {
         await navigator.share({
           title: this.article.title,
           text: this.article.description,
-          url: this.article.url
+          url: this.article.url,
         });
       } catch {}
     } else {
@@ -73,13 +78,21 @@ export class NewsCardComponent {
     }
   }
 
-  onImgError() { this.imgError = true; }
+  onImgError() {
+    this.imgError = true;
+  }
+  onFaviconError() {
+    this.faviconError = true;
+  }
 
   get sentimentIcon(): string {
     switch (this.article.sentiment) {
-      case 'positive': return '😊';
-      case 'negative': return '😟';
-      default: return '😐';
+      case 'positive':
+        return '😊';
+      case 'negative':
+        return '😟';
+      default:
+        return '😐';
     }
   }
 }

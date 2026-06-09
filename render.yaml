@@ -1,0 +1,29 @@
+# Render blueprint for the Zech News backend.
+# Root dir = repo root so `require('../lib/...')` resolves and runtime deps come
+# from the root package.json. Deploy: New + > Blueprint, point at this repo.
+services:
+  - type: web
+    name: zech-news-api
+    runtime: node
+    plan: free
+    region: oregon
+    buildCommand: npm install
+    startCommand: node server/index.js
+    healthCheckPath: /health
+    autoDeploy: true
+    envVars:
+      - key: NODE_VERSION
+        value: "20"
+      - key: PREWARM
+        value: "1"
+      # Comma-separated allow-list. Set to your deployed frontend origin(s).
+      - key: ALLOWED_ORIGIN
+        value: https://zechnews.vercel.app
+      # Free API keys — add the real values in the Render dashboard (sync: false
+      # keeps them out of git). All optional; sources degrade gracefully.
+      - key: GUARDIAN_KEY
+        sync: false
+      - key: NEWSDATA_KEY
+        sync: false
+      - key: GNEWS_API_KEY
+        sync: false

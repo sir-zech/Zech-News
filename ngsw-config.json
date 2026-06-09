@@ -42,6 +42,7 @@
     {
       "name": "news-api",
       "urls": [
+        "/api/feed",
         "/api/news",
         "/api/hn",
         "/api/devto",
@@ -49,7 +50,7 @@
         "/api/space"
       ],
       "cacheConfig": {
-        "maxSize": 100,
+        "maxSize": 120,
         "maxAge": "1h",
         "timeout": "10s",
         "strategy": "freshness"
@@ -62,6 +63,18 @@
       ],
       "cacheConfig": {
         "maxSize": 50,
+        "maxAge": "7d",
+        "strategy": "performance"
+      }
+    },
+    {
+      "name": "thumbnails",
+      "urls": [
+        "https://wsrv.nl/**",
+        "https://www.google.com/s2/favicons**"
+      ],
+      "cacheConfig": {
+        "maxSize": 250,
         "maxAge": "7d",
         "strategy": "performance"
       }

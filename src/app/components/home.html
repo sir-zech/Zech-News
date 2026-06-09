@@ -20,16 +20,6 @@
 
       <p>Breaking stories, curated for you. Real-time. Reliable.</p>
 
-      <div class="quick-links">
-        <button
-          *ngFor="let q of quickLinks"
-          (click)="loadCategory(q.value)"
-          class="ql-chip"
-          [class.active]="currentCategory === q.value">
-          {{ q.label }}
-        </button>
-      </div>
-
       <!-- Language Selector -->
       <div class="lang-bar">
         <span class="lang-label">🌐 {{ getLangLabel() }}</span>
@@ -46,13 +36,28 @@
     </div>
   </section>
 
+  <!-- Sticky Topic Chips -->
+  <nav class="topic-bar">
+    <button
+      class="topic-chip"
+      [class.active]="currentCategory === 'general'"
+      (click)="loadCategory('general')">
+      ✦ Top
+    </button>
+    <button
+      *ngFor="let q of quickLinks"
+      (click)="loadCategory(q.value)"
+      class="topic-chip"
+      [class.active]="currentCategory === q.value">
+      {{ q.label }}
+    </button>
+  </nav>
+
   <!-- Trending Topics -->
   <section class="trending" *ngIf="trendingTopics.length > 0 && !loading">
     <div class="section-label">🔥 Trending Now</div>
     <div class="trending-chips">
-      <span class="trend-chip" *ngFor="let topic of trendingTopics">
-        #{{ topic }}
-      </span>
+      <span class="trend-chip" *ngFor="let topic of trendingTopics">#{{ topic }}</span>
     </div>
   </section>
 
@@ -63,12 +68,12 @@
     <div class="featured" (click)="openArticle(featured)">
       <div class="featured-img">
         <img
-          [src]="featured.image || 'https://placehold.co/800x420/2563eb/fff?text=Zech+News'"
-          [alt]="featured.title" />
+          [src]="(featured.image | imgproxy:900) || 'https://placehold.co/800x420/2563eb/fff?text=Zech+News'"
+          [alt]="featured.title"
+          fetchpriority="high"
+          decoding="async" />
         <div class="featured-overlay"></div>
-        <span class="featured-source">
-          {{ featured.source.name }}
-        </span>
+        <span class="featured-source">{{ featured.source.name }}</span>
       </div>
 
       <div class="featured-body">
@@ -77,20 +82,19 @@
           <span class="sentiment sentiment-{{ featured.sentiment }}">
             {{ featured.sentiment === 'positive' ? '😊' : featured.sentiment === 'negative' ? '😟' : '😐' }}
           </span>
+          <span class="time">{{ featured.publishedAt | timeAgo }}</span>
         </div>
         <h2>{{ featured.title }}</h2>
         <p>{{ featured.description }}</p>
         <div class="featured-meta">
-          <span class="date">
-            {{ featured.publishedAt | date:'MMMM d, y' }}
-          </span>
+          <span class="date">{{ featured.publishedAt | date:'MMMM d, y' }}</span>
           <span class="read-btn">Read Summary →</span>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- Loading Skeleton -->
+  <!-- Loading Skeleton (initial) -->
   <div class="skeleton-wrap" *ngIf="loading">
     <div class="skeleton sk-featured"></div>
     <div class="grid">
@@ -105,121 +109,65 @@
     <button (click)="retry()" class="retry-btn">Try Again</button>
   </div>
 
-  <!-- Empty State -->
-  <div class="error-state" *ngIf="!loading && !error && articles.length === 0 && !featured">
-    <div class="error-icon">📰</div>
-    <p>No news found for this category.</p>
-  </div>
+  <!-- Community / secondary sections (compact rows) -->
+  <section class="row-section" *ngIf="!localLoading && localArticles.length > 0">
+    <div class="section-label">📍 Local — {{ locationService.location()?.city || locationService.location()?.country || '' }}</div>
+    <div class="row-list">
+      <app-news-card *ngFor="let a of localArticles" [article]="a" [compact]="true"></app-news-card>
+    </div>
+  </section>
 
-  <!-- News Grid -->
-  <section class="news-section" *ngIf="!loading && !error && articles.length > 0">
+  <section class="row-section" *ngIf="!hnLoading && hnArticles.length > 0">
+    <div class="section-label">🖥️ Tech — Hacker News</div>
+    <div class="row-list">
+      <app-news-card *ngFor="let a of hnArticles" [article]="a" [compact]="true"></app-news-card>
+    </div>
+  </section>
+
+  <section class="row-section" *ngIf="!devtoLoading && devtoArticles.length > 0">
+    <div class="section-label">👩‍💻 Dev Community — Dev.to</div>
+    <div class="row-list">
+      <app-news-card *ngFor="let a of devtoArticles" [article]="a" [compact]="true"></app-news-card>
+    </div>
+  </section>
+
+  <section class="row-section" *ngIf="!spaceLoading && spaceArticles.length > 0">
+    <div class="section-label">🚀 Space & Science</div>
+    <div class="row-list">
+      <app-news-card *ngFor="let a of spaceArticles" [article]="a" [compact]="true"></app-news-card>
+    </div>
+  </section>
+
+  <section class="row-section" *ngIf="!redditLoading && redditArticles.length > 0">
+    <div class="section-label">🔴 Reddit — r/news</div>
+    <div class="row-list">
+      <app-news-card *ngFor="let a of redditArticles" [article]="a" [compact]="true"></app-news-card>
+    </div>
+  </section>
+
+  <!-- Latest — endless river -->
+  <section class="news-section" *ngIf="!loading && !error && (feedArticles.length > 0 || featured)">
     <div class="section-label">✦ Latest News</div>
     <div class="grid">
       <app-news-card
-        *ngFor="let article of articles; let i = index"
+        *ngFor="let article of feedArticles; let i = index"
         [article]="article"
-        [style.animation-delay]="i * 60 + 'ms'">
-      </app-news-card>
-    </div>
-  </section>
-
-  <!-- Local News -->
-  <section class="local-section">
-    <div class="section-label">📍 Local News — {{ locationService.location()?.city || locationService.location()?.country || 'Detecting...' }}</div>
-
-    <div class="grid" *ngIf="!localLoading && localArticles.length > 0">
-      <app-news-card
-        *ngFor="let article of localArticles; let i = index"
-        [article]="article"
-        [style.animation-delay]="i * 60 + 'ms'">
+        [style.animation-delay]="(i % 12) * 50 + 'ms'">
       </app-news-card>
     </div>
 
-    <div class="skeleton-wrap" *ngIf="localLoading">
-      <div class="grid">
-        <div class="skeleton sk-card" *ngFor="let i of [1,2,3]"></div>
-      </div>
-    </div>
-
-    <div class="local-empty" *ngIf="!localLoading && localArticles.length === 0 && locationService.location()">
-      No local news found for {{ locationService.location()?.city || locationService.location()?.country }}. Try a different location via 📍 in the navbar.
-    </div>
-  </section>
-
-  <!-- Hacker News -->
-  <section class="hn-section" *ngIf="!hnLoading && hnArticles.length > 0">
-    <div class="section-label">🖥️ Tech — Hacker News</div>
-    <div class="grid">
-      <app-news-card
-        *ngFor="let article of hnArticles; let i = index"
-        [article]="article"
-        [style.animation-delay]="i * 60 + 'ms'">
-      </app-news-card>
-    </div>
-  </section>
-
-  <div class="skeleton-wrap" *ngIf="hnLoading">
-    <div class="section-label">🖥️ Loading tech news...</div>
-    <div class="grid">
+    <!-- Infinite-scroll skeleton while appending -->
+    <div class="grid more-skeleton" *ngIf="loadingMore">
       <div class="skeleton sk-card" *ngFor="let i of [1,2,3]"></div>
     </div>
-  </div>
 
-  <!-- Dev.to -->
-  <section class="hn-section" *ngIf="!devtoLoading && devtoArticles.length > 0">
-    <div class="section-label">👩‍💻 Dev Community — Dev.to</div>
-    <div class="grid">
-      <app-news-card
-        *ngFor="let article of devtoArticles; let i = index"
-        [article]="article"
-        [style.animation-delay]="i * 60 + 'ms'">
-      </app-news-card>
+    <!-- End of feed -->
+    <div class="feed-end" *ngIf="!hasMore && !loadingMore">
+      ✓ You're all caught up
     </div>
   </section>
 
-  <div class="skeleton-wrap" *ngIf="devtoLoading">
-    <div class="section-label">👩‍💻 Loading Dev.to...</div>
-    <div class="grid">
-      <div class="skeleton sk-card" *ngFor="let i of [1,2,3]"></div>
-    </div>
-  </div>
-
-  <!-- Space News -->
-  <section class="hn-section" *ngIf="!spaceLoading && spaceArticles.length > 0">
-    <div class="section-label">🚀 Space & Science</div>
-    <div class="grid">
-      <app-news-card
-        *ngFor="let article of spaceArticles; let i = index"
-        [article]="article"
-        [style.animation-delay]="i * 60 + 'ms'">
-      </app-news-card>
-    </div>
-  </section>
-
-  <div class="skeleton-wrap" *ngIf="spaceLoading">
-    <div class="section-label">🚀 Loading space news...</div>
-    <div class="grid">
-      <div class="skeleton sk-card" *ngFor="let i of [1,2,3]"></div>
-    </div>
-  </div>
-
-  <!-- Reddit -->
-  <section class="hn-section" *ngIf="!redditLoading && redditArticles.length > 0">
-    <div class="section-label">🔴 Reddit — r/news</div>
-    <div class="grid">
-      <app-news-card
-        *ngFor="let article of redditArticles; let i = index"
-        [article]="article"
-        [style.animation-delay]="i * 60 + 'ms'">
-      </app-news-card>
-    </div>
-  </section>
-
-  <div class="skeleton-wrap" *ngIf="redditLoading">
-    <div class="section-label">🔴 Loading Reddit...</div>
-    <div class="grid">
-      <div class="skeleton sk-card" *ngFor="let i of [1,2,3]"></div>
-    </div>
-  </div>
+  <!-- Infinite-scroll sentinel -->
+  <div #scrollAnchor class="scroll-anchor" aria-hidden="true"></div>
 
 </div>
