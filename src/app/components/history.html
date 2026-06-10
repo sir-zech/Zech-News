@@ -1,0 +1,29 @@
+<div class="history-page">
+  <div class="hs-header">
+    <div class="hs-header-inner">
+      <div class="hs-accent-bar"></div>
+      <div>
+        <div class="hs-eyebrow">Recently Read</div>
+        <h2>Reading History</h2>
+      </div>
+    </div>
+    <button class="clear-btn" (click)="clearAll()" *ngIf="historyService.count() > 0">
+      <app-icon name="trash" [size]="14"></app-icon>
+      Clear History
+    </button>
+  </div>
+
+  <div class="row-list" *ngIf="historyService.count() > 0">
+    <app-news-card
+      *ngFor="let article of historyService.items(); let i = index"
+      [article]="article"
+      [compact]="true"
+      [style.animation-delay]="(i % 12) * 40 + 'ms'">
+    </app-news-card>
+  </div>
+
+  <div class="empty" *ngIf="historyService.count() === 0">
+    <app-icon class="empty-icon" name="history" [size]="48" [strokeWidth]="1.5"></app-icon>
+    <p>Nothing here yet. Articles you open will appear in your history.</p>
+  </div>
+</div>

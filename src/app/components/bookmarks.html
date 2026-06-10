@@ -11,6 +11,7 @@
       class="clear-btn"
       (click)="clearAll()"
       *ngIf="bookmarkService.count() > 0">
+      <app-icon name="trash" [size]="14"></app-icon>
       Clear All
     </button>
   </div>
@@ -24,7 +25,7 @@
   </div>
 
   <div class="empty" *ngIf="bookmarkService.count() === 0">
-    <div class="empty-icon">🔖</div>
+    <app-icon class="empty-icon" name="bookmark" [size]="48" [strokeWidth]="1.5"></app-icon>
     <p>No bookmarks yet. Save articles to read later.</p>
   </div>
 </div>

@@ -4,12 +4,13 @@ import { Router } from '@angular/router';
 import { BookmarkService } from '../services/bookmark';
 import { ArticleStateService } from '../services/article-state';
 import { NewsCardComponent } from './news-card';
+import { IconComponent } from './icon';
 import { Article } from '../models/article.model';
 
 @Component({
   selector: 'app-bookmarks',
   standalone: true,
-  imports: [CommonModule, NewsCardComponent],
+  imports: [CommonModule, NewsCardComponent, IconComponent],
   templateUrl: './bookmarks.html',
   styleUrls: ['./bookmarks.scss']
 })

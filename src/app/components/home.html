@@ -2,7 +2,7 @@
 
   <!-- Pull-to-refresh indicator (mobile) -->
   <div class="ptr" [style.height.px]="refreshing ? 46 : pullY" [class.refreshing]="refreshing">
-    <span class="ptr-icon" [class.spin]="refreshing" [style.opacity]="refreshing ? 1 : (pullY / 55)">⟳</span>
+    <app-icon class="ptr-icon" name="refresh" [size]="20" [class.spin]="refreshing" [style.opacity]="refreshing ? 1 : (pullY / 55)"></app-icon>
   </div>
 
   <!-- Hero Banner -->
@@ -16,18 +16,21 @@
     <app-mascot class="hero-mascot"></app-mascot>
 
     <div class="hero-content">
-      <div class="hero-badge">⚡ Live Updates</div>
+      <div class="hero-top">
+        <div class="hero-badge"><app-icon name="zap" [size]="13"></app-icon> Live Updates</div>
+        <span class="hero-date">{{ today | date:'EEEE, MMMM d' }}</span>
+      </div>
 
       <h1>
-        Stay Ahead with<br>
-        <span>Zech News</span>
+        Your briefing,<br>
+        <span>from Zech News</span>
       </h1>
 
-      <p>Breaking stories, curated for you. Real-time. Reliable.</p>
+      <p>Breaking stories, curated for you. Real-time. Reliable. Ad-free.</p>
 
       <!-- Language Selector -->
       <div class="lang-bar">
-        <span class="lang-label">🌐 {{ getLangLabel() }}</span>
+        <span class="lang-label"><app-icon name="globe" [size]="13"></app-icon> {{ getLangLabel() }}</span>
         <div class="lang-chips">
           <button
             *ngFor="let l of languages"
@@ -58,17 +61,23 @@
     </button>
   </nav>
 
-  <!-- Trending Topics -->
+  <!-- Trending Topics (tap to search) -->
   <section class="trending" *ngIf="trendingTopics.length > 0 && !loading">
-    <div class="section-label">🔥 Trending Now</div>
+    <div class="section-label"><app-icon name="flame" [size]="14"></app-icon> Trending Now</div>
     <div class="trending-chips">
-      <span class="trend-chip" *ngFor="let topic of trendingTopics">#{{ topic }}</span>
+      <button
+        class="trend-chip"
+        *ngFor="let topic of trendingTopics"
+        (click)="searchTopic(topic)"
+        [attr.aria-label]="'Search news about ' + topic">
+        #{{ topic }}
+      </button>
     </div>
   </section>
 
   <!-- Featured Article -->
   <section class="featured-wrap" *ngIf="featured && !loading">
-    <div class="section-label">✦ Featured Story</div>
+    <div class="section-label"><app-icon name="sparkles" [size]="14"></app-icon> Featured Story</div>
 
     <div class="featured" [class.read]="isRead(featured)" (click)="openArticle(featured)">
       <div class="featured-img">
@@ -83,9 +92,9 @@
 
       <div class="featured-body">
         <div class="featured-smart">
-          <span class="reading-time">⏱️ {{ featured.readingTime }} min</span>
-          <span class="sentiment sentiment-{{ featured.sentiment }}">
-            {{ featured.sentiment === 'positive' ? '😊' : featured.sentiment === 'negative' ? '😟' : '😐' }}
+          <span class="chip"><app-icon name="clock" [size]="12"></app-icon> {{ featured.readingTime }} min</span>
+          <span class="chip sentiment-{{ featured.sentiment }}">
+            <app-icon [name]="featured.sentiment === 'positive' ? 'smile' : featured.sentiment === 'negative' ? 'frown' : 'meh'" [size]="12"></app-icon>
           </span>
           <span class="time">{{ featured.publishedAt | timeAgo }}</span>
         </div>
@@ -93,7 +102,7 @@
         <p>{{ featured.description }}</p>
         <div class="featured-meta">
           <span class="date">{{ featured.publishedAt | date:'MMMM d, y' }}</span>
-          <span class="read-btn">Read Summary →</span>
+          <span class="read-btn">Read Summary <app-icon name="arrow-right" [size]="14"></app-icon></span>
         </div>
       </div>
     </div>
@@ -114,37 +123,48 @@
     <button (click)="retry()" class="retry-btn">Try Again</button>
   </div>
 
+  <!-- Continue Reading (recent history) -->
+  <section class="row-section" *ngIf="historyService.count() > 0 && !loading">
+    <div class="section-head">
+      <div class="section-label"><app-icon name="book-open" [size]="14"></app-icon> Continue Reading</div>
+      <a routerLink="/history" class="see-all">View all <app-icon name="arrow-right" [size]="13"></app-icon></a>
+    </div>
+    <div class="row-list">
+      <app-news-card *ngFor="let a of recentHistory" [article]="a" [compact]="true"></app-news-card>
+    </div>
+  </section>
+
   <!-- Community / secondary sections (compact rows) -->
   <section class="row-section" *ngIf="!localLoading && localArticles.length > 0">
-    <div class="section-label">📍 Local — {{ locationService.location()?.city || locationService.location()?.country || '' }}</div>
+    <div class="section-label"><app-icon name="map-pin" [size]="14"></app-icon> Local — {{ locationService.location()?.city || locationService.location()?.country || '' }}</div>
     <div class="row-list">
       <app-news-card *ngFor="let a of localArticles" [article]="a" [compact]="true"></app-news-card>
     </div>
   </section>
 
   <section class="row-section" *ngIf="!hnLoading && hnArticles.length > 0">
-    <div class="section-label">🖥️ Tech — Hacker News</div>
+    <div class="section-label"><app-icon name="cpu" [size]="14"></app-icon> Tech — Hacker News</div>
     <div class="row-list">
       <app-news-card *ngFor="let a of hnArticles" [article]="a" [compact]="true"></app-news-card>
     </div>
   </section>
 
   <section class="row-section" *ngIf="!devtoLoading && devtoArticles.length > 0">
-    <div class="section-label">👩‍💻 Dev Community — Dev.to</div>
+    <div class="section-label"><app-icon name="code" [size]="14"></app-icon> Dev Community — Dev.to</div>
     <div class="row-list">
       <app-news-card *ngFor="let a of devtoArticles" [article]="a" [compact]="true"></app-news-card>
     </div>
   </section>
 
   <section class="row-section" *ngIf="!spaceLoading && spaceArticles.length > 0">
-    <div class="section-label">🚀 Space & Science</div>
+    <div class="section-label"><app-icon name="rocket" [size]="14"></app-icon> Space & Science</div>
     <div class="row-list">
       <app-news-card *ngFor="let a of spaceArticles" [article]="a" [compact]="true"></app-news-card>
     </div>
   </section>
 
   <section class="row-section" *ngIf="!redditLoading && redditArticles.length > 0">
-    <div class="section-label">🔴 Reddit — r/news</div>
+    <div class="section-label"><app-icon name="message-circle" [size]="14"></app-icon> Reddit — r/news</div>
     <div class="row-list">
       <app-news-card *ngFor="let a of redditArticles" [article]="a" [compact]="true"></app-news-card>
     </div>
@@ -153,16 +173,22 @@
   <!-- Latest — endless river -->
   <section class="news-section" *ngIf="!loading && !error && (feedArticles.length > 0 || featured)">
     <div class="section-head">
-      <div class="section-label">✦ Latest News</div>
+      <div class="section-label"><app-icon name="newspaper" [size]="14"></app-icon> Latest News</div>
       <div class="view-options">
         <div class="seg">
-          <button [class.active]="settings.density() === 'card'" (click)="settings.setDensity('card')" title="Card view" aria-label="Card view">▦</button>
-          <button [class.active]="settings.density() === 'compact'" (click)="settings.setDensity('compact')" title="List view" aria-label="List view">☰</button>
+          <button [class.active]="settings.density() === 'card'" (click)="settings.setDensity('card')" title="Card view" aria-label="Card view">
+            <app-icon name="grid" [size]="15"></app-icon>
+          </button>
+          <button [class.active]="settings.density() === 'compact'" (click)="settings.setDensity('compact')" title="List view" aria-label="List view">
+            <app-icon name="list" [size]="15"></app-icon>
+          </button>
         </div>
-        <button class="vo-btn" (click)="settings.toggleImages()" [title]="settings.showImages() ? 'Hide images' : 'Show images'">
-          {{ settings.showImages() ? '🖼️' : '🚫' }}
+        <button class="vo-btn" (click)="settings.toggleImages()" [title]="settings.showImages() ? 'Hide images' : 'Show images'" [attr.aria-label]="settings.showImages() ? 'Hide images' : 'Show images'">
+          <app-icon [name]="settings.showImages() ? 'image' : 'image-off'" [size]="15"></app-icon>
         </button>
-        <button class="vo-btn" (click)="markAllRead()" title="Mark all read">✓</button>
+        <button class="vo-btn" (click)="markAllRead()" title="Mark all read" aria-label="Mark all read">
+          <app-icon name="check-circle" [size]="15"></app-icon>
+        </button>
       </div>
     </div>
     <div [ngClass]="settings.density() === 'compact' ? 'row-list' : 'grid'">
@@ -181,7 +207,7 @@
 
     <!-- End of feed -->
     <div class="feed-end" *ngIf="!hasMore && !loadingMore">
-      ✓ You're all caught up
+      <app-icon name="check-circle" [size]="16"></app-icon> You're all caught up
     </div>
   </section>
 

@@ -3,6 +3,7 @@ import { HomeComponent } from './components/home';
 import { CategoryComponent } from './components/category';
 import { ArticleDetailComponent } from './components/article-detail';
 import { BookmarksComponent } from './components/bookmarks';
+import { HistoryComponent } from './components/history';
 import { DonateComponent } from './components/donate';
 
 export const routes: Routes = [
@@ -10,6 +11,7 @@ export const routes: Routes = [
   { path: 'category/:name', component: CategoryComponent },
   { path: 'article', component: ArticleDetailComponent },
   { path: 'bookmarks', component: BookmarksComponent },
+  { path: 'history', component: HistoryComponent },
   { path: 'donate', component: DonateComponent },
   { path: '**', redirectTo: '' }
 ];

@@ -5,6 +5,7 @@ import {
   OnDestroy,
   ViewChild,
   ElementRef,
+  ChangeDetectorRef,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute } from '@angular/router';
@@ -40,7 +41,8 @@ export class CategoryComponent implements OnInit, AfterViewInit, OnDestroy {
   constructor(
     private route: ActivatedRoute,
     private newsService: NewsService,
-    private smartService: SmartService
+    private smartService: SmartService,
+    private cdr: ChangeDetectorRef
   ) {}
 
   ngOnInit() {
@@ -103,11 +105,14 @@ export class CategoryComponent implements OnInit, AfterViewInit, OnDestroy {
         this.page++;
         this.loading = false;
         this.loadingMore = false;
+        // Zoneless CD: async mutations must schedule a refresh themselves
+        this.cdr.markForCheck();
       },
       error: () => {
         this.loading = false;
         this.loadingMore = false;
         if (reset) this.error = 'Failed to load news.';
+        this.cdr.markForCheck();
       },
     });
   }

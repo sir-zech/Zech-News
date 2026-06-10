@@ -8,11 +8,12 @@ import { ReadStateService } from '../services/read-state';
 import { SettingsService } from '../services/settings';
 import { TimeAgoPipe } from '../pipes/time-ago.pipe';
 import { ImgProxyPipe, FaviconPipe } from '../pipes/img-proxy.pipe';
+import { IconComponent } from './icon';
 
 @Component({
   selector: 'app-news-card',
   standalone: true,
-  imports: [CommonModule, TimeAgoPipe, ImgProxyPipe, FaviconPipe],
+  imports: [CommonModule, TimeAgoPipe, ImgProxyPipe, FaviconPipe, IconComponent],
   templateUrl: './news-card.html',
   styleUrls: ['./news-card.scss'],
 })
@@ -94,14 +95,14 @@ export class NewsCardComponent {
     this.faviconError = true;
   }
 
-  get sentimentIcon(): string {
+  get sentimentIconName(): string {
     switch (this.article.sentiment) {
       case 'positive':
-        return '😊';
+        return 'smile';
       case 'negative':
-        return '😟';
+        return 'frown';
       default:
-        return '😐';
+        return 'meh';
     }
   }
 }

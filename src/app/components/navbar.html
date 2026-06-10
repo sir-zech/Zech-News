@@ -24,21 +24,40 @@
     </a>
 
     <div class="nav-actions">
-      <div class="nav-search desktop-search">
-        <input [(ngModel)]="searchQuery" (keyup.enter)="onSearch()" placeholder="Search news…" />
-        <button (click)="onSearch()" class="search-btn" aria-label="Search">🔍</button>
+      <div class="search-wrap desktop-search">
+        <div class="nav-search">
+          <input
+            [(ngModel)]="searchQuery"
+            (keyup.enter)="onSearch()"
+            (focus)="onSearchFocus()"
+            placeholder="Search news…" />
+          <button (click)="onSearch()" class="search-btn" aria-label="Search">
+            <app-icon name="search" [size]="16"></app-icon>
+          </button>
+        </div>
+        <div class="recent-dropdown" *ngIf="showRecent && recentSearches.length > 0">
+          <div class="recent-head">
+            <span>Recent searches</span>
+            <button class="recent-clear" (click)="clearRecent($event)">Clear</button>
+          </div>
+          <button class="recent-item" *ngFor="let term of recentSearches" (click)="searchRecent(term)">
+            <app-icon name="history" [size]="14"></app-icon>
+            {{ term }}
+          </button>
+        </div>
       </div>
 
       <div class="loc-wrap">
         <button class="icon-btn loc-btn-nav" (click)="toggleLocationDropdown($event)" title="Location" aria-label="Location">
-          <span class="ib-glyph">📍</span>
+          <app-icon name="map-pin" [size]="17"></app-icon>
           <span class="loc-nav-label" *ngIf="locationService.location()">
             {{ locationService.location()?.city || locationService.location()?.country || '' }}
           </span>
         </button>
         <div class="loc-dropdown" *ngIf="showLocationDropdown" (click)="$event.stopPropagation()">
           <div class="loc-current" *ngIf="locationService.location()">
-            📍 {{ locationService.location()?.city ? locationService.location()?.city + ', ' : '' }}{{ locationService.location()?.country }}
+            <app-icon name="map-pin" [size]="14"></app-icon>
+            {{ locationService.location()?.city ? locationService.location()?.city + ', ' : '' }}{{ locationService.location()?.country }}
           </div>
           <div class="loc-search-wrap">
             <input
@@ -53,28 +72,34 @@
               class="loc-result-item"
               *ngFor="let r of locationResults"
               (click)="selectLocation(r)">
-              📍 {{ r.label }}
+              <app-icon name="map-pin" [size]="14"></app-icon>
+              {{ r.label }}
             </button>
           </div>
           <div class="loc-no-results" *ngIf="locationQuery.length >= 2 && locationResults.length === 0">
             No matching locations.
           </div>
           <button class="loc-auto-btn" (click)="autoDetectLocation()">
-            📡 Auto-Detect
+            <app-icon name="refresh" [size]="14"></app-icon>
+            Auto-Detect
           </button>
         </div>
       </div>
 
+      <a routerLink="/history" class="icon-btn desktop-only" title="Reading history" aria-label="Reading history">
+        <app-icon name="history" [size]="17"></app-icon>
+      </a>
+
       <a routerLink="/bookmarks" class="icon-btn bookmark-btn" title="Saved" aria-label="Saved articles">
-        <span class="ib-glyph">🔖</span>
+        <app-icon name="bookmark" [size]="17"></app-icon>
         <span class="bk-badge" *ngIf="bookmarkService.count() > 0">{{ bookmarkService.count() }}</span>
       </a>
       <a routerLink="/donate" class="coffee-btn" title="Buy me a coffee">
-        <span class="coffee-icon">☕</span>
+        <app-icon name="coffee" [size]="16"></app-icon>
         <span class="coffee-label">Tip</span>
       </a>
       <button class="icon-btn theme-btn" (click)="toggle()" [title]="dark ? 'Light mode' : 'Dark mode'" [attr.aria-label]="dark ? 'Switch to light mode' : 'Switch to dark mode'">
-        {{ dark ? '☀️' : '🌙' }}
+        <app-icon [name]="dark ? 'sun' : 'moon'" [size]="17"></app-icon>
       </button>
       <button class="hamburger" (click)="toggleMenu()" [class.open]="menuOpen" aria-label="Menu" [attr.aria-expanded]="menuOpen">
         <span></span><span></span><span></span>
@@ -89,20 +114,34 @@
          routerLinkActive="active"
          class="cat-link"
          (click)="menuOpen=false">
-        <span class="cat-icon">{{ cat.icon }}</span>
+        <app-icon class="cat-icon" [name]="cat.icon" [size]="16"></app-icon>
         {{ cat.label }}
       </a>
       <a routerLink="/bookmarks"
          routerLinkActive="active"
          class="cat-link bookmark-link"
          (click)="menuOpen=false">
-        <span class="cat-icon">🔖</span>
+        <app-icon class="cat-icon" name="bookmark" [size]="16"></app-icon>
         Saved
         <span class="bk-count" *ngIf="bookmarkService.count() > 0">{{ bookmarkService.count() }}</span>
       </a>
+      <a routerLink="/history"
+         routerLinkActive="active"
+         class="cat-link history-link"
+         (click)="menuOpen=false">
+        <app-icon class="cat-icon" name="history" [size]="16"></app-icon>
+        History
+      </a>
       <div class="nav-search mobile-search">
         <input [(ngModel)]="searchQuery" (keyup.enter)="onSearch()" placeholder="Search news…" />
-        <button (click)="onSearch()" class="search-btn" aria-label="Search">🔍</button>
+        <button (click)="onSearch()" class="search-btn" aria-label="Search">
+          <app-icon name="search" [size]="16"></app-icon>
+        </button>
+      </div>
+      <div class="recent-chips" *ngIf="recentSearches.length > 0">
+        <button class="recent-chip" *ngFor="let term of recentSearches" (click)="searchRecent(term)">
+          {{ term }}
+        </button>
       </div>
     </div>
   </div>
@@ -111,24 +150,29 @@
 <!-- Mobile Bottom Nav -->
 <nav class="bottom-nav">
   <a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }" class="btm-item">
-    <span class="btm-icon">🏠</span>
+    <app-icon class="btm-icon" name="home" [size]="21"></app-icon>
     <span class="btm-label">Home</span>
   </a>
   <a routerLink="/category/technology" routerLinkActive="active" class="btm-item">
-    <span class="btm-icon">💻</span>
+    <app-icon class="btm-icon" name="cpu" [size]="21"></app-icon>
     <span class="btm-label">Tech</span>
   </a>
   <a routerLink="/category/sports" routerLinkActive="active" class="btm-item">
-    <span class="btm-icon">⚽</span>
+    <app-icon class="btm-icon" name="trophy" [size]="21"></app-icon>
     <span class="btm-label">Sports</span>
   </a>
   <a routerLink="/bookmarks" routerLinkActive="active" class="btm-item">
-    <span class="btm-icon">🔖</span>
+    <app-icon class="btm-icon" name="bookmark" [size]="21"></app-icon>
     <span class="btm-label">Saved</span>
     <span class="btm-badge" *ngIf="bookmarkService.count() > 0">{{ bookmarkService.count() }}</span>
   </a>
   <a routerLink="/donate" routerLinkActive="active" class="btm-item">
-    <span class="btm-icon">☕</span>
+    <app-icon class="btm-icon" name="coffee" [size]="21"></app-icon>
     <span class="btm-label">Tip</span>
   </a>
 </nav>
+
+<!-- Back to top -->
+<button class="back-to-top" [class.visible]="showTop" (click)="scrollTop()" aria-label="Back to top">
+  <app-icon name="arrow-up" [size]="18"></app-icon>
+</button>

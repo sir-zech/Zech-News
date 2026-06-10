@@ -12,6 +12,7 @@
       <span class="src-name">{{ article.source.name }}</span>
       <span class="dot">·</span>
       <span class="time">{{ article.publishedAt | timeAgo }}</span>
+      <app-icon *ngIf="isReadArticle" class="read-tick" name="check" [size]="13"></app-icon>
     </div>
     <h4>{{ article.title }}</h4>
   </div>
@@ -25,13 +26,18 @@
       height="96"
       (error)="onImgError()" />
   </div>
-  <button class="row-save" (click)="toggleBookmark($event)" [attr.aria-label]="isBookmarked() ? 'Remove' : 'Save'">
-    {{ isBookmarked() ? '🔖' : '🏷️' }}
+  <button
+    class="row-save"
+    (click)="toggleBookmark($event)"
+    [class.saved]="isBookmarked()"
+    [attr.aria-label]="isBookmarked() ? 'Remove from saved' : 'Save for later'"
+    [attr.aria-pressed]="isBookmarked()">
+    <app-icon [name]="isBookmarked() ? 'bookmark-filled' : 'bookmark'" [size]="16"></app-icon>
   </button>
 </div>
 
 <!-- Full rich card -->
-<div class="card" *ngIf="!compact" [class.read]="isReadArticle" (click)="openArticle($event)">
+<article class="card" *ngIf="!compact" [class.read]="isReadArticle" (click)="openArticle($event)">
   <!-- Image present -->
   <div class="card-img" *ngIf="hasImage">
     <img
@@ -44,12 +50,9 @@
       (error)="onImgError()" />
     <div class="card-img-overlay"></div>
     <span class="source-badge">{{ article.source.name }}</span>
-    <div class="card-actions">
-      <button class="card-action-btn" (click)="toggleBookmark($event)" [title]="isBookmarked() ? 'Remove' : 'Save'">
-        {{ isBookmarked() ? '🔖' : '🏷️' }}
-      </button>
-      <button class="card-action-btn" (click)="share($event)" title="Share">📤</button>
-    </div>
+    <span class="read-badge" *ngIf="isReadArticle">
+      <app-icon name="check" [size]="12"></app-icon> Read
+    </span>
   </div>
 
   <!-- No image — gradient placeholder -->
@@ -59,16 +62,13 @@
       <span class="placeholder-domain">{{ domainName }}</span>
     </div>
     <span class="source-badge">{{ article.source.name }}</span>
-    <div class="card-actions">
-      <button class="card-action-btn" (click)="toggleBookmark($event)" [title]="isBookmarked() ? 'Remove' : 'Save'">
-        {{ isBookmarked() ? '🔖' : '🏷️' }}
-      </button>
-      <button class="card-action-btn" (click)="share($event)" title="Share">📤</button>
-    </div>
+    <span class="read-badge" *ngIf="isReadArticle">
+      <app-icon name="check" [size]="12"></app-icon> Read
+    </span>
   </div>
 
   <div class="card-body">
-    <div class="card-smart">
+    <div class="card-meta">
       <img
         *ngIf="!faviconError"
         class="favicon"
@@ -76,15 +76,37 @@
         alt=""
         loading="lazy"
         (error)="onFaviconError()" />
-      <span class="reading-time" *ngIf="article.readingTime">⏱️ {{ article.readingTime }}m</span>
-      <span class="sentiment" *ngIf="article.sentiment">{{ sentimentIcon }}</span>
+      <span class="src-name">{{ article.source.name }}</span>
+      <span class="dot" aria-hidden="true">·</span>
       <span class="time">{{ article.publishedAt | timeAgo }}</span>
     </div>
+
     <h3>{{ article.title }}</h3>
-    <p>{{ article.description }}</p>
+    <p *ngIf="article.description">{{ article.description }}</p>
+
     <div class="card-footer">
-      <span class="src">{{ article.source.name }}</span>
-      <span class="read-more">Read →</span>
+      <div class="card-chips">
+        <span class="chip" *ngIf="article.readingTime">
+          <app-icon name="clock" [size]="12"></app-icon>
+          {{ article.readingTime }} min
+        </span>
+        <span class="chip sentiment-{{ article.sentiment }}" *ngIf="article.sentiment">
+          <app-icon [name]="sentimentIconName" [size]="12"></app-icon>
+        </span>
+      </div>
+      <div class="card-actions">
+        <button
+          class="card-action-btn"
+          (click)="toggleBookmark($event)"
+          [class.saved]="isBookmarked()"
+          [attr.aria-label]="isBookmarked() ? 'Remove from saved' : 'Save for later'"
+          [attr.aria-pressed]="isBookmarked()">
+          <app-icon [name]="isBookmarked() ? 'bookmark-filled' : 'bookmark'" [size]="16"></app-icon>
+        </button>
+        <button class="card-action-btn" (click)="share($event)" aria-label="Share article">
+          <app-icon name="share" [size]="16"></app-icon>
+        </button>
+      </div>
     </div>
   </div>
-</div>
+</article>

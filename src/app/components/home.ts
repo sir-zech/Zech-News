@@ -5,20 +5,23 @@ import {
   OnDestroy,
   ViewChild,
   ElementRef,
+  ChangeDetectorRef,
   effect,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { Router } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { NewsService } from '../services/news';
 import { SmartService } from '../services/smart';
 import { LocationService, UserLocation } from '../services/location';
 import { ArticleStateService } from '../services/article-state';
 import { ReadStateService } from '../services/read-state';
 import { SettingsService } from '../services/settings';
+import { HistoryService } from '../services/history';
 import { Article } from '../models/article.model';
 import { NewsCardComponent } from './news-card';
 import { MascotComponent } from './mascot';
+import { IconComponent } from './icon';
 import { TimeAgoPipe } from '../pipes/time-ago.pipe';
 import { ImgProxyPipe } from '../pipes/img-proxy.pipe';
 
@@ -28,8 +31,10 @@ import { ImgProxyPipe } from '../pipes/img-proxy.pipe';
   imports: [
     CommonModule,
     FormsModule,
+    RouterLink,
     NewsCardComponent,
     MascotComponent,
+    IconComponent,
     TimeAgoPipe,
     ImgProxyPipe,
   ],
@@ -63,6 +68,7 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
   error = '';
 
   currentCategory = 'general';
+  today = new Date();
   private observer?: IntersectionObserver;
 
   selectedLang = 'en';
@@ -107,7 +113,9 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
     private articleState: ArticleStateService,
     public readState: ReadStateService,
     public settings: SettingsService,
-    private router: Router
+    public historyService: HistoryService,
+    private router: Router,
+    private cdr: ChangeDetectorRef
   ) {
     const savedLang = localStorage.getItem('zech-lang');
     if (savedLang) this.selectedLang = savedLang;
@@ -236,6 +244,8 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
         this.loading = false;
         this.loadingMore = false;
         this.refreshing = false;
+        // Zoneless CD: async mutations must schedule a refresh themselves
+        this.cdr.markForCheck();
       },
       error: (err) => {
         this.loading = false;
@@ -247,6 +257,7 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
               ? 'Too many requests. Please wait a few seconds.'
               : 'Failed to load news. Try a different language or category.';
         }
+        this.cdr.markForCheck();
       },
     });
   }
@@ -257,8 +268,12 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
       next: (res) => {
         this.hnArticles = this.smartService.enrichAll(res.articles || []);
         this.hnLoading = false;
+        this.cdr.markForCheck();
       },
-      error: () => (this.hnLoading = false),
+      error: () => {
+        this.hnLoading = false;
+        this.cdr.markForCheck();
+      },
     });
   }
 
@@ -268,8 +283,12 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
       next: (res) => {
         this.devtoArticles = this.smartService.enrichAll(res.articles || []);
         this.devtoLoading = false;
+        this.cdr.markForCheck();
       },
-      error: () => (this.devtoLoading = false),
+      error: () => {
+        this.devtoLoading = false;
+        this.cdr.markForCheck();
+      },
     });
   }
 
@@ -279,8 +298,12 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
       next: (res) => {
         this.spaceArticles = this.smartService.enrichAll(res.articles || []);
         this.spaceLoading = false;
+        this.cdr.markForCheck();
       },
-      error: () => (this.spaceLoading = false),
+      error: () => {
+        this.spaceLoading = false;
+        this.cdr.markForCheck();
+      },
     });
   }
 
@@ -290,8 +313,12 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
       next: (res) => {
         this.redditArticles = this.smartService.enrichAll(res.articles || []);
         this.redditLoading = false;
+        this.cdr.markForCheck();
       },
-      error: () => (this.redditLoading = false),
+      error: () => {
+        this.redditLoading = false;
+        this.cdr.markForCheck();
+      },
     });
   }
 
@@ -301,8 +328,12 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
       next: (res) => {
         this.localArticles = this.smartService.enrichAll(res.articles || []).slice(0, 6);
         this.localLoading = false;
+        this.cdr.markForCheck();
       },
-      error: () => (this.localLoading = false),
+      error: () => {
+        this.localLoading = false;
+        this.cdr.markForCheck();
+      },
     });
   }
 
@@ -327,6 +358,14 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
 
   retry() {
     this.loadFeed(true);
+  }
+
+  get recentHistory(): Article[] {
+    return this.historyService.items().slice(0, 4);
+  }
+
+  searchTopic(topic: string) {
+    this.router.navigate(['/category', 'search'], { queryParams: { q: topic } });
   }
 
   getLangLabel(): string {

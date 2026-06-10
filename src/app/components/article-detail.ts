@@ -1,18 +1,20 @@
-import { Component, OnInit, OnDestroy, HostListener } from '@angular/core';
+import { Component, OnInit, OnDestroy, HostListener, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { ArticleStateService } from '../services/article-state';
 import { BookmarkService } from '../services/bookmark';
+import { HistoryService } from '../services/history';
 import { TtsService } from '../services/tts';
 import { SmartService } from '../services/smart';
 import { NewsService, ExtractedArticle } from '../services/news';
 import { Article } from '../models/article.model';
 import { ImgProxyPipe, FaviconPipe } from '../pipes/img-proxy.pipe';
+import { IconComponent } from './icon';
 
 @Component({
   selector: 'app-article-detail',
   standalone: true,
-  imports: [CommonModule, ImgProxyPipe, FaviconPipe],
+  imports: [CommonModule, ImgProxyPipe, FaviconPipe, IconComponent],
   templateUrl: './article-detail.html',
   styleUrls: ['./article-detail.scss'],
 })
@@ -39,9 +41,11 @@ export class ArticleDetailComponent implements OnInit, OnDestroy {
     private articleState: ArticleStateService,
     private router: Router,
     public bookmarkService: BookmarkService,
+    private historyService: HistoryService,
     public ttsService: TtsService,
     private smartService: SmartService,
-    private newsService: NewsService
+    private newsService: NewsService,
+    private cdr: ChangeDetectorRef
   ) {}
 
   ngOnInit() {
@@ -56,6 +60,7 @@ export class ArticleDetailComponent implements OnInit, OnDestroy {
     this.article = this.smartService.enrichArticle(this.article);
     this.summaryPoints = this.smartService.generateSummaryPoints(this.article);
     this.isBookmarked = this.bookmarkService.isBookmarked(this.article.url);
+    this.historyService.add(this.article);
     window.scrollTo({ top: 0 });
     this.loadFullArticle();
   }
@@ -88,10 +93,13 @@ export class ArticleDetailComponent implements OnInit, OnDestroy {
           this.extracted = true;
           if (data.image && !this.article!.image) this.article!.image = data.image;
         }
+        // Zoneless CD: async mutations must schedule a refresh themselves
+        this.cdr.markForCheck();
       },
       error: () => {
         this.extracting = false;
         this.extractError = 'Could not load full article.';
+        this.cdr.markForCheck();
       },
     });
   }
@@ -157,14 +165,14 @@ export class ArticleDetailComponent implements OnInit, OnDestroy {
     this.imgError = true;
   }
 
-  getSentimentIcon(): string {
+  getSentimentIconName(): string {
     switch (this.article?.sentiment) {
       case 'positive':
-        return '😊';
+        return 'smile';
       case 'negative':
-        return '😟';
+        return 'frown';
       default:
-        return '😐';
+        return 'meh';
     }
   }
 

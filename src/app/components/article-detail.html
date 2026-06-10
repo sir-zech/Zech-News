@@ -2,7 +2,10 @@
 <div class="reading-progress" [style.width.%]="readingProgress"></div>
 
 <div class="article-page" *ngIf="article">
-  <button class="back-btn" (click)="goBack()">← Back</button>
+  <button class="back-btn" (click)="goBack()">
+    <app-icon name="arrow-left" [size]="15"></app-icon>
+    Back
+  </button>
 
   <article class="article-container">
     <div class="article-hero" *ngIf="article.image && !imgError">
@@ -25,23 +28,44 @@
       <!-- Sticky reader toolbar -->
       <div class="article-toolbar">
         <div class="toolbar-left">
-          <span class="meta-item">⏱️ {{ readingTimeFull }} min</span>
-          <span class="meta-item sentiment-{{ article.sentiment }}">
-            {{ getSentimentIcon() }} {{ getSentimentLabel() }}
+          <span class="meta-item">
+            <app-icon name="clock" [size]="13"></app-icon>
+            {{ readingTimeFull }} min
           </span>
-          <span class="meta-item extracted-badge" *ngIf="extracted">✅ Full</span>
+          <span class="meta-item sentiment-{{ article.sentiment }}">
+            <app-icon [name]="getSentimentIconName()" [size]="13"></app-icon>
+            {{ getSentimentLabel() }}
+          </span>
+          <span class="meta-item extracted-badge" *ngIf="extracted">
+            <app-icon name="check-circle" [size]="13"></app-icon>
+            Full text
+          </span>
         </div>
         <div class="toolbar-right">
           <button class="tool-btn font-btn" (click)="decFont()" title="Smaller text" aria-label="Smaller text">A−</button>
           <button class="tool-btn font-btn" (click)="incFont()" title="Larger text" aria-label="Larger text">A+</button>
-          <button class="tool-btn" (click)="toggleTts()" [title]="ttsService.speaking() ? 'Stop reading' : 'Read aloud'">
-            {{ ttsService.speaking() ? (ttsService.paused() ? '▶️' : '⏸️') : '🔊' }}
+          <button
+            class="tool-btn"
+            (click)="toggleTts()"
+            [class.active]="ttsService.speaking()"
+            [title]="ttsService.speaking() ? 'Stop reading' : 'Read aloud'"
+            [attr.aria-label]="ttsService.speaking() ? 'Stop reading aloud' : 'Read article aloud'">
+            <app-icon [name]="ttsService.speaking() ? (ttsService.paused() ? 'play' : 'pause') : 'volume'" [size]="16"></app-icon>
           </button>
-          <button class="tool-btn" (click)="toggleBookmark()" [title]="isBookmarked ? 'Remove bookmark' : 'Bookmark'">
-            {{ isBookmarked ? '🔖' : '🏷️' }}
+          <button
+            class="tool-btn"
+            (click)="toggleBookmark()"
+            [class.active]="isBookmarked"
+            [title]="isBookmarked ? 'Remove bookmark' : 'Bookmark'"
+            [attr.aria-pressed]="isBookmarked">
+            <app-icon [name]="isBookmarked ? 'bookmark-filled' : 'bookmark'" [size]="16"></app-icon>
           </button>
-          <button class="tool-btn" (click)="share()" *ngIf="shareSupported" title="Share">📤</button>
-          <button class="tool-btn" (click)="copyLink()" title="Copy link">🔗</button>
+          <button class="tool-btn" (click)="share()" *ngIf="shareSupported" title="Share" aria-label="Share article">
+            <app-icon name="share" [size]="16"></app-icon>
+          </button>
+          <button class="tool-btn" (click)="copyLink()" title="Copy link" aria-label="Copy article link">
+            <app-icon name="link" [size]="16"></app-icon>
+          </button>
         </div>
       </div>
 
@@ -59,7 +83,7 @@
       <!-- AI Summary -->
       <div class="summary-section">
         <div class="summary-header">
-          <span class="summary-icon">✦</span>
+          <app-icon name="sparkles" [size]="15"></app-icon>
           <span>AI Summary</span>
         </div>
         <ul class="summary-points">
@@ -76,7 +100,7 @@
       <!-- Full extracted article -->
       <div class="full-article" *ngIf="extracted && fullContent.length > 0">
         <div class="full-article-header">
-          <span class="full-icon">📖</span>
+          <app-icon name="book-open" [size]="15"></app-icon>
           <span>Full Article — Ad-Free</span>
           <span class="word-count">{{ fullWordCount }} words</span>
         </div>
