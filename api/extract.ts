@@ -8,7 +8,7 @@ const EMPTY = {
   paragraphs: [], images: [], byline: '', wordCount: 0, extracted: false,
 };
 
-module.exports = async function handler(req, res) {
+module.exports = async function handler(req: ApiRequest, res: ApiResponse) {
   try {
     const { url } = req.query;
     if (!url) return res.status(400).json({ error: 'URL required' });

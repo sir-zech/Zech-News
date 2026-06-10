@@ -1,7 +1,7 @@
 // Vercel function — Reddit (fallback host).
 const { fetchReddit } = require('../lib/sources/reddit');
 
-module.exports = async function handler(req, res) {
+module.exports = async function handler(req: ApiRequest, res: ApiResponse) {
   try {
     const { limit = '6', sub = 'news' } = req.query;
     const articles = await fetchReddit({ limit, sub });

@@ -1,7 +1,7 @@
 // Vercel function — thin wrapper over the shared lib/. Acts as the fallback host.
 const { getNews } = require('../lib/feed');
 
-module.exports = async function handler(req, res) {
+module.exports = async function handler(req: ApiRequest, res: ApiResponse) {
   try {
     const { category = 'general', q, lang = 'en', country, max = '10' } = req.query;
     const data = await getNews({ category, q, lang, country, max });
@@ -12,6 +12,7 @@ module.exports = async function handler(req, res) {
     return res.status(200).json(data);
   } catch (err) {
     console.error('news error:', err);
-    return res.status(500).json({ error: 'Server error', details: err.message });
+    const details = err instanceof Error ? err.message : String(err);
+    return res.status(500).json({ error: 'Server error', details });
   }
 };

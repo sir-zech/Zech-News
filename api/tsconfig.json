@@ -1,0 +1,16 @@
+{
+  /* Scoped config for the Vercel serverless functions — Node/CommonJS code.
+     Keeps the editor from type-checking these with the Angular browser config. */
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "commonjs",
+    "moduleResolution": "node",
+    "lib": ["ES2022"],
+    "types": ["node"],
+    "strict": true,
+    "skipLibCheck": true,
+    "esModuleInterop": true,
+    "noEmit": true
+  },
+  "include": ["**/*.ts"]
+}

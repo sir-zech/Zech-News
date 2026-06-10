@@ -27,9 +27,10 @@
   gap: 0;
 }
 
-/* ---------- Second-row category strip: removed on desktop, becomes the mobile menu ---------- */
+/* ---------- Second-row category strip: horizontal tabs on desktop, becomes the mobile menu ---------- */
 .nav-catbar {
-  display: none;
+  border-top: 1px solid var(--border);
+  background: color-mix(in srgb, var(--bg3) 45%, transparent);
 }
 
 /* ---------- Brand + bear-head logo ---------- */
@@ -143,9 +144,11 @@
     }
   }
 
-  /* desktop: Saved lives in the actions row as an icon, not in the pills */
+  /* desktop: Saved + History live in the actions row as icons, not in the pills */
   .bookmark-link { display: none; }
+  .history-link { display: none; }
   .mobile-search { display: none; }
+  .recent-chips { display: none; }
 }
 
 .nav-actions {
@@ -647,12 +650,14 @@
       &.active { background: var(--accent-glow); color: var(--accent); }
     }
 
-    /* show Saved inside the mobile menu */
+    /* show Saved + History inside the mobile menu */
     .bookmark-link {
       display: flex;
       justify-content: flex-start;
       .bk-count { margin-left: auto; }
     }
+
+    .history-link { display: flex; }
 
     .mobile-search {
       display: flex;
